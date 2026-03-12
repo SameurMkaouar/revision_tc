@@ -174,7 +174,7 @@
             <h3>Concepts & Architecture</h3>
             <p>
               Monolithique vs microservices, pourquoi les conteneurs, conteneur
-              vs VM, noyau partagé.
+              vs VM, namespaces, cgroups, architecture Docker.
             </p>
           </a>
           <a class="chapter-card" onclick="showPage('ch2')">
@@ -430,6 +430,387 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <div class="section" id="ch1-historique">
+          <h3>Historique de la conteneurisation</h3>
+          <ul>
+            <li>
+              <strong>Chroot (1979)</strong> — premier mécanisme d'isolation
+              Unix : modifie le répertoire racine d'un processus pour limiter
+              son accès au système de fichiers. Pas d'isolation complète des
+              processus ni des ressources.
+            </li>
+            <li>
+              <strong>FreeBSD Jails (2000)</strong> — environnements isolés plus
+              complets que chroot : propre système de fichiers, réseau et
+              processus, mais noyau partagé. Premier vrai précurseur de la
+              conteneurisation.
+            </li>
+            <li>
+              <strong>LXC — Linux Containers (2008)</strong> — repose sur des
+              mécanismes d'isolation intégrés au noyau Linux. Crée des
+              environnements virtuels isolés (processus, FS, réseau, utilisateurs,
+              ressources) en utilisant les <strong>namespaces</strong> et
+              les <strong>cgroups</strong>.
+            </li>
+            <li>
+              <strong>Docker (2013)</strong> — simplifie et cible la
+              conteneurisation d'applications. Utilise LXC jusqu'à la version
+              0.9, puis développe son propre moteur basé sur namespaces et
+              cgroups via <strong>libcontainer</strong>.
+            </li>
+          </ul>
+        </div>
+
+        <div class="section" id="ch1-namespaces">
+          <h3>Namespaces</h3>
+          <p>
+            Sans namespaces, tous les processus voient les mêmes ressources : même
+            hostname, PID unique global, configuration réseau commune, mêmes
+            montages. Les <strong>namespaces</strong> sont une fonctionnalité du
+            noyau Linux qui permettent d'isoler ces ressources entre conteneurs,
+            créant des groupes de processus ayant leur propre "vision" du
+            système.
+          </p>
+
+          <div class="callout def">
+            <div class="callout-title">📖 Définition</div>
+            Un namespace est un mécanisme d'isolation des ressources qui divise
+            un même environnement en plusieurs sous-environnements. Chaque
+            namespace crée une frontière pour certains types de ressources, de
+            sorte que les processus qui y fonctionnent coexistent sur la même
+            machine tout en étant isolés les uns des autres.
+          </div>
+
+          <h4>Les 6 types de namespaces</h4>
+          <ul>
+            <li>
+              <strong>User Namespace</strong> — isole les identifiants
+              d'utilisateurs et de groupes (UID, GID). Un utilisateur dans un
+              conteneur peut avoir un UID distinct de celui du système hôte ou
+              d'autres conteneurs. Chaque conteneur a son propre utilisateur
+              <code>root</code> local.
+            </li>
+            <li>
+              <strong>PID Namespace</strong> — isole les identifiants de
+              processus. Chaque conteneur a ses propres PID indépendants. Le
+              processus PID 1 dans un conteneur est son processus principal, mais
+              ce même PID peut être attribué à un autre processus dans un autre
+              conteneur.
+            </li>
+            <li>
+              <strong>Network Namespace</strong> — isole les interfaces réseau et
+              configurations réseau. Chaque conteneur dispose de ses propres
+              interfaces virtuelles, espace d'adressage IP et routes réseau.
+            </li>
+            <li>
+              <strong>Mount Namespace</strong> — isole l'arborescence du système
+              de fichiers. Chaque conteneur a son propre FS monté indépendamment
+              du FS hôte et des autres conteneurs.
+            </li>
+            <li>
+              <strong>UTS Namespace</strong> (UNIX Time-Sharing) — permet à
+              chaque conteneur d'avoir son propre <em>hostname</em> et domaine
+              DNS distinct.
+            </li>
+            <li>
+              <strong>IPC Namespace</strong> (Interprocess Communication) — isole
+              les communications inter-processus (mémoire partagée, sémaphores,
+              files de messages) entre conteneurs.
+            </li>
+          </ul>
+        </div>
+
+        <div class="section" id="ch1-cgroups">
+          <h3>Cgroups (Control Groups)</h3>
+          <p>
+            Les <strong>cgroups</strong> sont une fonctionnalité du noyau Linux
+            utilisée pour <strong>limiter, compter et isoler</strong>
+            l'utilisation des ressources (CPU, mémoire, disque, réseau) par un
+            groupe de processus.
+          </p>
+
+          <h4>Principales fonctionnalités</h4>
+          <ul>
+            <li>
+              <strong>Limitation des ressources</strong> — fixe des limites de
+              mémoire, CPU, disque ou réseau qu'un groupe de processus ne peut
+              pas dépasser
+            </li>
+            <li>
+              <strong>Suivi et Comptabilité</strong> — mesure la quantité de
+              ressources consommées par chaque groupe (utile pour la facturation)
+            </li>
+            <li>
+              <strong>Priorisation</strong> — certains groupes obtiennent une
+              plus grande part de CPU ou de bande passante I/O
+            </li>
+            <li>
+              <strong>Isolation</strong> — garantit que chaque groupe fonctionne
+              de manière indépendante sans interférer avec les autres
+            </li>
+            <li>
+              <strong>Contrôle</strong> — possibilité de geler l'état d'un groupe
+              (arrêter l'exécution) ou de sauvegarder/restaurer son état
+            </li>
+          </ul>
+
+          <div class="callout tip">
+            <div class="callout-title">💡 Namespaces + Cgroups</div>
+            Les <strong>namespaces</strong> fournissent l'<em>isolation</em> (chaque
+            conteneur voit son propre environnement), tandis que les
+            <strong>cgroups</strong> fournissent le <em>contrôle des ressources</em>
+            (quota CPU, mémoire, etc.). Ensemble, ils constituent la base
+            technologique des conteneurs LXC et Docker.
+          </div>
+        </div>
+
+        <div class="section" id="ch1-avantages">
+          <h3>Avantages de la conteneurisation</h3>
+          <ul>
+            <li>
+              <strong>Flexibles</strong> — capable d'héberger toutes sortes
+              d'applications, y compris les plus complexes, en isolant
+              l'application, ses dépendances, son environnement d'exécution et ses
+              bibliothèques
+            </li>
+            <li>
+              <strong>Légers</strong> — partagent le noyau du système hôte sans
+              nécessiter un OS complet pour chaque instance, réduisant la
+              consommation de mémoire, stockage et CPU
+            </li>
+            <li>
+              <strong>Interchangeables</strong> — facilement déployés, mis à jour
+              et échangés sans perturber l'ensemble du système ; gestion fluide
+              des versions
+            </li>
+            <li>
+              <strong>Portables</strong> — développés en local, déployés en cloud
+              public/privé ou sur machines physiques sans problèmes de
+              configuration
+            </li>
+            <li>
+              <strong>Évolutifs</strong> — capacité à ajuster dynamiquement la
+              capacité d'un service en fonction de la charge (scalabilité)
+            </li>
+          </ul>
+        </div>
+
+        <div class="section" id="ch1-origines-docker">
+          <h3>Les origines de Docker</h3>
+          <ul>
+            <li>
+              <strong>2010</strong> — Solomon Hykes fonde
+              <strong>dotCloud</strong>, une plateforme PaaS permettant de
+              déployer des applications sur des serveurs cloud
+            </li>
+            <li>
+              <strong>2012</strong> — dotCloud explore la création d'un système
+              de gestion de conteneurs pour mieux gérer ses applications internes
+            </li>
+            <li>
+              <strong>2013</strong> — présentation de <strong>Docker</strong>,
+              visant à simplifier LXC pour créer, déployer et exécuter des
+              applications dans des environnements isolés via namespaces et
+              cgroups, avec une interface plus conviviale que LXC
+            </li>
+          </ul>
+
+          <div class="callout info">
+            <div class="callout-title">🐳 Le nom "Docker"</div>
+            Choisi pour évoquer la gestion et le transport de containers,
+            similaires à ceux utilisés dans le secteur maritime.
+          </div>
+        </div>
+
+        <div class="section" id="ch1-docker-def">
+          <h3>C'est quoi Docker ?</h3>
+          <p>
+            Docker est une <strong>plate-forme ouverte</strong> permettant
+            d'empaqueter une application et ses dépendances dans un conteneur
+            isolé qui pourra être exécuté sur n'importe quel serveur.
+          </p>
+
+          <h4>Concepts fondamentaux</h4>
+          <ul>
+            <li>
+              <strong>Virtualisation légère</strong> — les conteneurs partagent
+              le noyau de l'hôte ; pas de noyau propre, donc beaucoup plus légers
+              en ressources
+            </li>
+            <li>
+              <strong>Namespaces &amp; cgroups</strong> — Docker repose sur ces
+              deux concepts du noyau Linux pour fournir l'isolement et la gestion
+              des ressources
+            </li>
+            <li>
+              <strong>Copy-on-Write (COW)</strong> — optimise l'utilisation de
+              l'espace disque et améliore l'efficacité lors de la création de
+              nouveaux conteneurs
+            </li>
+            <li>
+              <strong>Déploiement instantané</strong> — grâce à la combinaison
+              virtualisation légère + namespaces + cgroups + COW, Docker permet
+              des déploiements quasi-instantanés sans démarrer un OS complet
+            </li>
+            <li>
+              <strong>Adapté aux microservices</strong> — isolation des services,
+              portabilité, scalabilité et déploiement rapide
+            </li>
+          </ul>
+        </div>
+
+        <div class="section" id="ch1-architecture">
+          <h3>Architecture Docker</h3>
+          <p>
+            Docker repose sur une architecture
+            <strong>client-serveur</strong> avec deux composants principaux :
+          </p>
+
+          <h4>Composants principaux</h4>
+          <ul>
+            <li>
+              <strong>Docker Client</strong> — interface utilisateur (Docker CLI
+              sur Linux, Remote API sur Mac/Windows). Envoie les commandes au
+              Docker Daemon pour créer, exécuter et gérer des conteneurs. Peut
+              être local ou distant.
+            </li>
+            <li>
+              <strong>Docker Daemon (dockerd)</strong> — cœur de Docker. Reçoit
+              et traite les requêtes du client (gestion des conteneurs, images,
+              volumes, réseaux).
+            </li>
+            <li>
+              <strong>REST API</strong> — permet au client de communiquer avec
+              le serveur Docker de manière standardisée.
+            </li>
+            <li>
+              <strong>Docker Engine</strong> = Docker Client + REST API + Docker
+              Daemon. Permet d'exécuter un conteneur, construire une image ou
+              partager des images via Docker Hub.
+            </li>
+            <li>
+              <strong>Docker Registry</strong> — bibliothèque qui stocke les
+              images Docker (public ou privé). Le registry public géré par Docker
+              s'appelle <strong>Docker Hub</strong>.
+            </li>
+            <li>
+              <strong>Docker Images</strong> — modèles statiques (templates)
+              immuables contenant tout le nécessaire pour exécuter une application.
+            </li>
+            <li>
+              <strong>Docker Containers</strong> — instances en cours d'exécution
+              d'une image Docker.
+            </li>
+          </ul>
+        </div>
+
+        <div class="section" id="ch1-runtime">
+          <h3>Container Runtime : containerd &amp; runc</h3>
+          <p>
+            Docker ne gère pas directement l'exécution des conteneurs. Il délègue
+            cette tâche à une chaîne de runtimes :
+          </p>
+
+          <div class="callout info">
+            <div class="callout-title">Chaîne d'exécution</div>
+            <strong>Docker Daemon</strong> → <strong>containerd</strong>
+            (haut niveau) → <strong>runc</strong> (bas niveau) →
+            <strong>libcontainer</strong> (noyau Linux)
+          </div>
+
+          <h4>1. containerd</h4>
+          <ul>
+            <li>
+              Moteur d'exécution de <strong>haut niveau</strong> — responsable
+              de la création, l'exécution, la gestion des conteneurs, ainsi que
+              la gestion des images et volumes
+            </li>
+            <li>
+              Intégré dans Docker mais également utilisé de manière autonome
+              (ex : Kubernetes)
+            </li>
+            <li>Utilise <strong>runc</strong> pour l'exécution réelle</li>
+          </ul>
+
+          <h4>2. runc</h4>
+          <ul>
+            <li>
+              Moteur d'exécution <strong>léger et bas niveau</strong> — prend
+              une image préexistante et gère son cycle de vie dans un
+              environnement isolé
+            </li>
+            <li>
+              Utilise <strong>libcontainer</strong> pour accéder aux mécanismes
+              bas niveau du noyau : namespaces, cgroups
+            </li>
+            <li>
+              Conforme à la spécification <strong>OCI Runtime</strong>
+              (Open Container Initiative), garantissant l'interopérabilité
+            </li>
+          </ul>
+
+          <h4>OCI — Open Container Initiative</h4>
+          <ul>
+            <li>
+              <strong>OCI Runtime Specification</strong> — décrit comment les
+              conteneurs doivent être lancés (configuration processus, cgroups,
+              namespaces, volumes…)
+            </li>
+            <li>
+              <strong>OCI Image Specification</strong> — décrit le format des
+              images (construction, stockage, transport)
+            </li>
+          </ul>
+        </div>
+
+        <div class="section" id="ch1-libcontainer">
+          <h3>Libcontainer</h3>
+          <p>
+            <strong>Libcontainer</strong> est une bibliothèque bas niveau qui lie
+            directement Docker avec le noyau Linux. Elle fournit des interfaces
+            pour manipuler les <strong>namespaces</strong>,
+            <strong>cgroups</strong>, interfaces réseau et règles de pare-feu —
+            sans dépendre de LXC ni d'autres packages externes.
+          </p>
+          <p>
+            En résumé : <strong>containerd</strong> gère le cycle de vie des
+            conteneurs et utilise <strong>runc</strong> (conforme OCI) pour les
+            exécuter ; runc utilise <strong>libcontainer</strong> pour accéder
+            aux fonctionnalités bas niveau du noyau Linux, garantissant une
+            exécution sécurisée et isolée.
+          </p>
+        </div>
+
+        <div class="section" id="ch1-image-vs-conteneur">
+          <h3>Image Docker vs Conteneur Docker</h3>
+          <ul>
+            <li>
+              <strong>Image Docker</strong> — modèle permettant de créer un
+              conteneur. Peut contenir un OS de base, un serveur web, une
+              application, etc. Créée via un <strong>Dockerfile</strong> ou
+              téléchargée depuis un Docker Registry.
+            </li>
+            <li>
+              <strong>Dockerfile</strong> — fichier de configuration contenant
+              des instructions pour construire une image (créer des répertoires,
+              copier des fichiers, etc.).
+            </li>
+            <li>
+              <strong>Conteneur Docker</strong> — instance exécutable d'une
+              image. Plateforme indépendante et sécurisée sans accès aux
+              ressources des autres conteneurs. Actions possibles :
+              <em>exécuter, démarrer, arrêter, déplacer, supprimer</em>.
+            </li>
+          </ul>
+
+          <div class="callout info">
+            <div class="callout-title">🔄 Cycle de vie d'un conteneur</div>
+            Création (depuis une image) → Exécution → Arrêt → Suppression.
+            Gestion flexible et isolée des applications tout au long de son
+            existence.
           </div>
         </div>
       </div>
