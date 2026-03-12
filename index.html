@@ -451,9 +451,9 @@
             <li>
               <strong>LXC — Linux Containers (2008)</strong> — repose sur des
               mécanismes d'isolation intégrés au noyau Linux. Crée des
-              environnements virtuels isolés (processus, FS, réseau, utilisateurs,
-              ressources) en utilisant les <strong>namespaces</strong> et
-              les <strong>cgroups</strong>.
+              environnements virtuels isolés (processus, FS, réseau,
+              utilisateurs, ressources) en utilisant les
+              <strong>namespaces</strong> et les <strong>cgroups</strong>.
             </li>
             <li>
               <strong>Docker (2013)</strong> — simplifie et cible la
@@ -467,12 +467,12 @@
         <div class="section" id="ch1-namespaces">
           <h3>Namespaces</h3>
           <p>
-            Sans namespaces, tous les processus voient les mêmes ressources : même
-            hostname, PID unique global, configuration réseau commune, mêmes
-            montages. Les <strong>namespaces</strong> sont une fonctionnalité du
-            noyau Linux qui permettent d'isoler ces ressources entre conteneurs,
-            créant des groupes de processus ayant leur propre "vision" du
-            système.
+            Sans namespaces, tous les processus voient les mêmes ressources :
+            même hostname, PID unique global, configuration réseau commune,
+            mêmes montages. Les <strong>namespaces</strong> sont une
+            fonctionnalité du noyau Linux qui permettent d'isoler ces ressources
+            entre conteneurs, créant des groupes de processus ayant leur propre
+            "vision" du système.
           </p>
 
           <div class="callout def">
@@ -496,13 +496,13 @@
             <li>
               <strong>PID Namespace</strong> — isole les identifiants de
               processus. Chaque conteneur a ses propres PID indépendants. Le
-              processus PID 1 dans un conteneur est son processus principal, mais
-              ce même PID peut être attribué à un autre processus dans un autre
-              conteneur.
+              processus PID 1 dans un conteneur est son processus principal,
+              mais ce même PID peut être attribué à un autre processus dans un
+              autre conteneur.
             </li>
             <li>
-              <strong>Network Namespace</strong> — isole les interfaces réseau et
-              configurations réseau. Chaque conteneur dispose de ses propres
+              <strong>Network Namespace</strong> — isole les interfaces réseau
+              et configurations réseau. Chaque conteneur dispose de ses propres
               interfaces virtuelles, espace d'adressage IP et routes réseau.
             </li>
             <li>
@@ -516,9 +516,9 @@
               DNS distinct.
             </li>
             <li>
-              <strong>IPC Namespace</strong> (Interprocess Communication) — isole
-              les communications inter-processus (mémoire partagée, sémaphores,
-              files de messages) entre conteneurs.
+              <strong>IPC Namespace</strong> (Interprocess Communication) —
+              isole les communications inter-processus (mémoire partagée,
+              sémaphores, files de messages) entre conteneurs.
             </li>
           </ul>
         </div>
@@ -541,7 +541,8 @@
             </li>
             <li>
               <strong>Suivi et Comptabilité</strong> — mesure la quantité de
-              ressources consommées par chaque groupe (utile pour la facturation)
+              ressources consommées par chaque groupe (utile pour la
+              facturation)
             </li>
             <li>
               <strong>Priorisation</strong> — certains groupes obtiennent une
@@ -552,16 +553,17 @@
               de manière indépendante sans interférer avec les autres
             </li>
             <li>
-              <strong>Contrôle</strong> — possibilité de geler l'état d'un groupe
-              (arrêter l'exécution) ou de sauvegarder/restaurer son état
+              <strong>Contrôle</strong> — possibilité de geler l'état d'un
+              groupe (arrêter l'exécution) ou de sauvegarder/restaurer son état
             </li>
           </ul>
 
           <div class="callout tip">
             <div class="callout-title">💡 Namespaces + Cgroups</div>
-            Les <strong>namespaces</strong> fournissent l'<em>isolation</em> (chaque
-            conteneur voit son propre environnement), tandis que les
-            <strong>cgroups</strong> fournissent le <em>contrôle des ressources</em>
+            Les <strong>namespaces</strong> fournissent l'<em>isolation</em>
+            (chaque conteneur voit son propre environnement), tandis que les
+            <strong>cgroups</strong> fournissent le
+            <em>contrôle des ressources</em>
             (quota CPU, mémoire, etc.). Ensemble, ils constituent la base
             technologique des conteneurs LXC et Docker.
           </div>
@@ -573,8 +575,8 @@
             <li>
               <strong>Flexibles</strong> — capable d'héberger toutes sortes
               d'applications, y compris les plus complexes, en isolant
-              l'application, ses dépendances, son environnement d'exécution et ses
-              bibliothèques
+              l'application, ses dépendances, son environnement d'exécution et
+              ses bibliothèques
             </li>
             <li>
               <strong>Légers</strong> — partagent le noyau du système hôte sans
@@ -582,13 +584,13 @@
               consommation de mémoire, stockage et CPU
             </li>
             <li>
-              <strong>Interchangeables</strong> — facilement déployés, mis à jour
-              et échangés sans perturber l'ensemble du système ; gestion fluide
-              des versions
+              <strong>Interchangeables</strong> — facilement déployés, mis à
+              jour et échangés sans perturber l'ensemble du système ; gestion
+              fluide des versions
             </li>
             <li>
-              <strong>Portables</strong> — développés en local, déployés en cloud
-              public/privé ou sur machines physiques sans problèmes de
+              <strong>Portables</strong> — développés en local, déployés en
+              cloud public/privé ou sur machines physiques sans problèmes de
               configuration
             </li>
             <li>
@@ -608,7 +610,8 @@
             </li>
             <li>
               <strong>2012</strong> — dotCloud explore la création d'un système
-              de gestion de conteneurs pour mieux gérer ses applications internes
+              de gestion de conteneurs pour mieux gérer ses applications
+              internes
             </li>
             <li>
               <strong>2013</strong> — présentation de <strong>Docker</strong>,
@@ -637,13 +640,13 @@
           <ul>
             <li>
               <strong>Virtualisation légère</strong> — les conteneurs partagent
-              le noyau de l'hôte ; pas de noyau propre, donc beaucoup plus légers
-              en ressources
+              le noyau de l'hôte ; pas de noyau propre, donc beaucoup plus
+              légers en ressources
             </li>
             <li>
               <strong>Namespaces &amp; cgroups</strong> — Docker repose sur ces
-              deux concepts du noyau Linux pour fournir l'isolement et la gestion
-              des ressources
+              deux concepts du noyau Linux pour fournir l'isolement et la
+              gestion des ressources
             </li>
             <li>
               <strong>Copy-on-Write (COW)</strong> — optimise l'utilisation de
@@ -656,8 +659,8 @@
               des déploiements quasi-instantanés sans démarrer un OS complet
             </li>
             <li>
-              <strong>Adapté aux microservices</strong> — isolation des services,
-              portabilité, scalabilité et déploiement rapide
+              <strong>Adapté aux microservices</strong> — isolation des
+              services, portabilité, scalabilité et déploiement rapide
             </li>
           </ul>
         </div>
@@ -693,16 +696,17 @@
             </li>
             <li>
               <strong>Docker Registry</strong> — bibliothèque qui stocke les
-              images Docker (public ou privé). Le registry public géré par Docker
-              s'appelle <strong>Docker Hub</strong>.
+              images Docker (public ou privé). Le registry public géré par
+              Docker s'appelle <strong>Docker Hub</strong>.
             </li>
             <li>
               <strong>Docker Images</strong> — modèles statiques (templates)
-              immuables contenant tout le nécessaire pour exécuter une application.
+              immuables contenant tout le nécessaire pour exécuter une
+              application.
             </li>
             <li>
-              <strong>Docker Containers</strong> — instances en cours d'exécution
-              d'une image Docker.
+              <strong>Docker Containers</strong> — instances en cours
+              d'exécution d'une image Docker.
             </li>
           </ul>
         </div>
@@ -710,14 +714,14 @@
         <div class="section" id="ch1-runtime">
           <h3>Container Runtime : containerd &amp; runc</h3>
           <p>
-            Docker ne gère pas directement l'exécution des conteneurs. Il délègue
-            cette tâche à une chaîne de runtimes :
+            Docker ne gère pas directement l'exécution des conteneurs. Il
+            délègue cette tâche à une chaîne de runtimes :
           </p>
 
           <div class="callout info">
             <div class="callout-title">Chaîne d'exécution</div>
-            <strong>Docker Daemon</strong> → <strong>containerd</strong>
-            (haut niveau) → <strong>runc</strong> (bas niveau) →
+            <strong>Docker Daemon</strong> → <strong>containerd</strong> (haut
+            niveau) → <strong>runc</strong> (bas niveau) →
             <strong>libcontainer</strong> (noyau Linux)
           </div>
 
@@ -729,8 +733,8 @@
               la gestion des images et volumes
             </li>
             <li>
-              Intégré dans Docker mais également utilisé de manière autonome
-              (ex : Kubernetes)
+              Intégré dans Docker mais également utilisé de manière autonome (ex
+              : Kubernetes)
             </li>
             <li>Utilise <strong>runc</strong> pour l'exécution réelle</li>
           </ul>
@@ -769,9 +773,9 @@
         <div class="section" id="ch1-libcontainer">
           <h3>Libcontainer</h3>
           <p>
-            <strong>Libcontainer</strong> est une bibliothèque bas niveau qui lie
-            directement Docker avec le noyau Linux. Elle fournit des interfaces
-            pour manipuler les <strong>namespaces</strong>,
+            <strong>Libcontainer</strong> est une bibliothèque bas niveau qui
+            lie directement Docker avec le noyau Linux. Elle fournit des
+            interfaces pour manipuler les <strong>namespaces</strong>,
             <strong>cgroups</strong>, interfaces réseau et règles de pare-feu —
             sans dépendre de LXC ni d'autres packages externes.
           </p>
