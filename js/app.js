@@ -161,22 +161,61 @@ function addCopyButtons() {
 }
 
 /* ─── Copy-column buttons for tables ────────────────────── */
+function showCopyToast(message) {
+  // Create toast container if it doesn't exist
+  let toastContainer = document.getElementById("copy-toast-container");
+  if (!toastContainer) {
+    toastContainer = document.createElement("div");
+    toastContainer.id = "copy-toast-container";
+    document.body.appendChild(toastContainer);
+  }
+
+  // Create toast element
+  const toast = document.createElement("div");
+  toast.className = "copy-toast";
+  toast.textContent = message;
+  toastContainer.appendChild(toast);
+
+  // Trigger animation
+  requestAnimationFrame(() => {
+    toast.classList.add("show");
+  });
+
+  // Remove after delay
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  }, 2000);
+}
+
 function addTableColumnCopyButtons() {
   document.querySelectorAll("table").forEach((table) => {
     const headers = table.querySelectorAll("thead th");
     headers.forEach((th, colIndex) => {
-      // Add hover effect and copy functionality
-      th.style.cursor = "pointer";
+      // Setup header styling
+      th.classList.add("copy-column-header");
       th.style.position = "relative";
-      th.title = "Cliquez pour copier cette colonne";
+      th.title = "Survolez pour copier";
 
-      th.addEventListener("click", function (e) {
+      // Create copy button with SVG icon
+      const copyBtn = document.createElement("button");
+      copyBtn.className = "copy-column-btn";
+      copyBtn.innerHTML =
+        '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>';
+      copyBtn.title = "Copier cette colonne";
+      copyBtn.setAttribute("aria-label", "Copier la colonne");
+      th.appendChild(copyBtn);
+
+      // Handle button click
+      copyBtn.addEventListener("click", function (e) {
         e.stopPropagation();
         // Get all cells in this column
         const columnData = [];
 
         // Get header text
-        const headerText = th.innerText.trim();
+        const headerText = th.innerText.replace("📋", "").trim();
         if (headerText) columnData.push(headerText);
 
         // Get all body rows for this column
@@ -193,14 +232,17 @@ function addTableColumnCopyButtons() {
         navigator.clipboard
           .writeText(text)
           .then(() => {
-            // Show feedback
-            const originalBg = th.style.backgroundColor;
-            th.style.backgroundColor = "var(--accent)";
-            th.style.color = "white";
+            // Add copied class for visual feedback
+            copyBtn.classList.add("copied");
+            copyBtn.innerHTML =
+              '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
             setTimeout(() => {
-              th.style.backgroundColor = originalBg;
-              th.style.color = "";
+              copyBtn.classList.remove("copied");
+              copyBtn.innerHTML =
+                '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>';
             }, 1000);
+            // Show toast notification
+            showCopyToast("✓ Colonne copiée");
           })
           .catch(() => {
             // Fallback
@@ -211,19 +253,25 @@ function addTableColumnCopyButtons() {
             sel.addRange(range);
             document.execCommand("copy");
             sel.removeAllRanges();
+            copyBtn.classList.add("copied");
+            copyBtn.innerHTML =
+              '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+            setTimeout(() => {
+              copyBtn.classList.remove("copied");
+              copyBtn.innerHTML =
+                '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>';
+            }, 1000);
+            showCopyToast("✓ Colonne copiée");
           });
       });
 
-      // Add visual indicator on hover
+      // Show/hide button on hover
       th.addEventListener("mouseenter", function () {
-        this.style.backgroundColor =
-          "rgba(var(--accent-rgb, 100,100,100), 0.1)";
-        this.style.fontWeight = "bold";
+        copyBtn.classList.add("visible");
       });
 
       th.addEventListener("mouseleave", function () {
-        this.style.backgroundColor = "";
-        this.style.fontWeight = "";
+        copyBtn.classList.remove("visible");
       });
     });
   });

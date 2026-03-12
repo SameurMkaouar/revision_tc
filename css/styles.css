@@ -399,13 +399,138 @@ th {
   color: var(--text);
   border-bottom: 2px solid var(--border);
 }
+
+/* ─── Clickable table column headers ─────────────────── */
+th.copy-column-header {
+  transition: background-color 0.2s ease;
+}
+
+th.copy-column-header:hover {
+  background: var(--bg-hover);
+}
+
+/* ─── Copy column button ─────────────────────────────── */
+.copy-column-btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%) scale(0.7);
+  opacity: 0;
+  background: var(--accent);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 6px;
+  cursor: pointer;
+  line-height: 1;
+  color: white;
+  transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.copy-column-btn svg {
+  display: block;
+}
+
+.copy-column-btn.visible {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+  pointer-events: auto;
+}
+
+.copy-column-btn:hover:not(.copied) {
+  background: var(--accent);
+  transform: translateY(-50%) scale(1.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.copy-column-btn.copied {
+  background: var(--accent3);
+}
+
+/* ─── Toast notification ─────────────────────────────── */
+#copy-toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.copy-toast {
+  background: var(--accent3);
+  color: white;
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+}
+
+.copy-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Clickable table column headers ─────────────────── */
+th.copy-column-header {
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+th.copy-column-header:hover {
+  background: var(--accent);
+  color: white;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+th.copy-column-header.copied {
+  background: var(--accent3);
+  color: white;
+}
+
+/* ─── Toast notification ─────────────────────────────── */
+#copy-toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.copy-toast {
+  background: var(--accent3);
+  color: white;
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+}
+
+.copy-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
 td {
   padding: 10px 14px;
   border-bottom: 1px solid var(--border);
   color: var(--text-dim);
+  transition: background-color 0.15s ease;
 }
 tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bg-hover);
+  color: var(--text);
 }
 
 /* ═══════════════════ TAGS ═══════════════════ */
@@ -464,7 +589,8 @@ hr {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 [data-theme="light"] tr:hover td {
-  background: rgba(0, 0, 0, 0.02);
+  background: var(--bg-hover);
+  color: var(--text);
 }
 
 /* ═══════ THEME TOGGLE ═══════ */
