@@ -160,6 +160,74 @@ function addCopyButtons() {
   });
 }
 
+/* ─── Copy-column buttons for tables ────────────────────── */
+function addTableColumnCopyButtons() {
+  document.querySelectorAll("table").forEach((table) => {
+    const headers = table.querySelectorAll("thead th");
+    headers.forEach((th, colIndex) => {
+      // Add hover effect and copy functionality
+      th.style.cursor = "pointer";
+      th.style.position = "relative";
+      th.title = "Cliquez pour copier cette colonne";
+      
+      th.addEventListener("click", function (e) {
+        e.stopPropagation();
+        // Get all cells in this column
+        const columnData = [];
+        
+        // Get header text
+        const headerText = th.innerText.trim();
+        if (headerText) columnData.push(headerText);
+        
+        // Get all body rows for this column
+        const rows = table.querySelectorAll("tbody tr");
+        rows.forEach((row) => {
+          const cell = row.cells[colIndex];
+          if (cell) {
+            columnData.push(cell.innerText.trim());
+          }
+        });
+        
+        // Join with newlines and copy to clipboard
+        const text = columnData.join("\n");
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            // Show feedback
+            const originalBg = th.style.backgroundColor;
+            th.style.backgroundColor = "var(--accent)";
+            th.style.color = "white";
+            setTimeout(() => {
+              th.style.backgroundColor = originalBg;
+              th.style.color = "";
+            }, 1000);
+          })
+          .catch(() => {
+            // Fallback
+            const sel = window.getSelection();
+            const range = document.createRange();
+            range.selectNodeContents(th);
+            sel.removeAllRanges();
+            sel.addRange(range);
+            document.execCommand("copy");
+            sel.removeAllRanges();
+          });
+      });
+      
+      // Add visual indicator on hover
+      th.addEventListener("mouseenter", function () {
+        this.style.backgroundColor = "rgba(var(--accent-rgb, 100,100,100), 0.1)";
+        this.style.fontWeight = "bold";
+      });
+      
+      th.addEventListener("mouseleave", function () {
+        this.style.backgroundColor = "";
+        this.style.fontWeight = "";
+      });
+    });
+  });
+}
+
 /* ─── Touch swipe gesture for sidebar ───────────────────── */
 (function initSwipe() {
   let startX = 0;
@@ -287,6 +355,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Add copy buttons to all code blocks
   addCopyButtons();
+
+  // Add copy-column buttons to all tables
+  addTableColumnCopyButtons();
 
   // Wire up sidebar overlay click to close
   const overlay = document.getElementById("sidebar-overlay");
