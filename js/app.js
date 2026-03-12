@@ -169,16 +169,16 @@ function addTableColumnCopyButtons() {
       th.style.cursor = "pointer";
       th.style.position = "relative";
       th.title = "Cliquez pour copier cette colonne";
-      
+
       th.addEventListener("click", function (e) {
         e.stopPropagation();
         // Get all cells in this column
         const columnData = [];
-        
+
         // Get header text
         const headerText = th.innerText.trim();
         if (headerText) columnData.push(headerText);
-        
+
         // Get all body rows for this column
         const rows = table.querySelectorAll("tbody tr");
         rows.forEach((row) => {
@@ -187,7 +187,7 @@ function addTableColumnCopyButtons() {
             columnData.push(cell.innerText.trim());
           }
         });
-        
+
         // Join with newlines and copy to clipboard
         const text = columnData.join("\n");
         navigator.clipboard
@@ -213,13 +213,14 @@ function addTableColumnCopyButtons() {
             sel.removeAllRanges();
           });
       });
-      
+
       // Add visual indicator on hover
       th.addEventListener("mouseenter", function () {
-        this.style.backgroundColor = "rgba(var(--accent-rgb, 100,100,100), 0.1)";
+        this.style.backgroundColor =
+          "rgba(var(--accent-rgb, 100,100,100), 0.1)";
         this.style.fontWeight = "bold";
       });
-      
+
       th.addEventListener("mouseleave", function () {
         this.style.backgroundColor = "";
         this.style.fontWeight = "";
