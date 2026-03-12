@@ -254,7 +254,9 @@
               <tbody>
                 <tr>
                   <td>App unique, toutes fonctionnalités imbriquées</td>
-                  <td>Petits services indépendants, chacun dédié à une fonction</td>
+                  <td>
+                    Petits services indépendants, chacun dédié à une fonction
+                  </td>
                 </tr>
                 <tr>
                   <td>Cycles longs — redéploiement complet à chaque modif</td>
@@ -272,14 +274,27 @@
         <div class="section" id="ch1-why">
           <h3>Motivation : Pourquoi les conteneurs ?</h3>
           <ul>
-            <li><strong>Compatibilité OS</strong> — services incompatibles avec la même version</li>
-            <li><strong>Conflits de bibliothèques</strong> — service A veut lib v1, service B veut lib v2</li>
-            <li><strong>Mise à niveau risquée</strong> — vérification de compatibilité à chaque upgrade</li>
-            <li><strong>Différences Dev / Test / Prod</strong> — comportement non garanti selon l'env</li>
+            <li>
+              <strong>Compatibilité OS</strong> — services incompatibles avec la
+              même version
+            </li>
+            <li>
+              <strong>Conflits de bibliothèques</strong> — service A veut lib
+              v1, service B veut lib v2
+            </li>
+            <li>
+              <strong>Mise à niveau risquée</strong> — vérification de
+              compatibilité à chaque upgrade
+            </li>
+            <li>
+              <strong>Différences Dev / Test / Prod</strong> — comportement non
+              garanti selon l'env
+            </li>
           </ul>
           <div class="callout warn">
             <div class="callout-title">⚠️ The Matrix from Hell</div>
-            Interdépendances complexes entre composants → la <strong>conteneurisation</strong> est la solution.
+            Interdépendances complexes entre composants → la
+            <strong>conteneurisation</strong> est la solution.
           </div>
         </div>
 
@@ -287,11 +302,19 @@
           <h3>Solution : Les Conteneurs</h3>
           <div class="callout def">
             <div class="callout-title">📦 Définition</div>
-            Un conteneur = application + dépendances + bibliothèques + config, dans un seul package isolé. Tous les conteneurs <strong>partagent le même noyau</strong> de l'hôte.
+            Un conteneur = application + dépendances + bibliothèques + config,
+            dans un seul package isolé. Tous les conteneurs
+            <strong>partagent le même noyau</strong> de l'hôte.
           </div>
           <ul>
-            <li>Isolation complète (processus, réseau, FS) mais <strong>noyau partagé</strong></li>
-            <li>Un hôte Ubuntu peut exécuter des conteneurs Fedora, CentOS… car le noyau Linux est commun</li>
+            <li>
+              Isolation complète (processus, réseau, FS) mais
+              <strong>noyau partagé</strong>
+            </li>
+            <li>
+              Un hôte Ubuntu peut exécuter des conteneurs Fedora, CentOS… car le
+              noyau Linux est commun
+            </li>
             <li>Légers : un seul noyau pour toutes les instances</li>
           </ul>
         </div>
@@ -301,15 +324,43 @@
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>Critère</th><th>VM</th><th>Conteneur</th></tr>
+                <tr>
+                  <th>Critère</th>
+                  <th>VM</th>
+                  <th>Conteneur</th>
+                </tr>
               </thead>
               <tbody>
-                <tr><td><strong>Isolation</strong></td><td>Noyau + OS distincts</td><td>Noyau de l'hôte partagé</td></tr>
-                <tr><td><strong>Ressources</strong></td><td>Lourde</td><td>Légère</td></tr>
-                <tr><td><strong>Démarrage</strong></td><td>Lent (OS complet)</td><td>Rapide (secondes)</td></tr>
-                <tr><td><strong>Performance</strong></td><td>Réduite</td><td>Proche de l'hôte</td></tr>
-                <tr><td><strong>Portabilité</strong></td><td>Dépend hyperviseur</td><td>Très portable</td></tr>
-                <tr><td><strong>Sécurité</strong></td><td>Forte isolation</td><td>Moins (noyau partagé)</td></tr>
+                <tr>
+                  <td><strong>Isolation</strong></td>
+                  <td>Noyau + OS distincts</td>
+                  <td>Noyau de l'hôte partagé</td>
+                </tr>
+                <tr>
+                  <td><strong>Ressources</strong></td>
+                  <td>Lourde</td>
+                  <td>Légère</td>
+                </tr>
+                <tr>
+                  <td><strong>Démarrage</strong></td>
+                  <td>Lent (OS complet)</td>
+                  <td>Rapide (secondes)</td>
+                </tr>
+                <tr>
+                  <td><strong>Performance</strong></td>
+                  <td>Réduite</td>
+                  <td>Proche de l'hôte</td>
+                </tr>
+                <tr>
+                  <td><strong>Portabilité</strong></td>
+                  <td>Dépend hyperviseur</td>
+                  <td>Très portable</td>
+                </tr>
+                <tr>
+                  <td><strong>Sécurité</strong></td>
+                  <td>Forte isolation</td>
+                  <td>Moins (noyau partagé)</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -317,42 +368,102 @@
 
         <div class="section" id="ch1-namespaces">
           <h3>Namespaces</h3>
-          <p>Fonctionnalité du noyau Linux permettant d'<strong>isoler les ressources</strong> entre conteneurs. Chaque conteneur a sa propre "vision" du système.</p>
+          <p>
+            Fonctionnalité du noyau Linux permettant d'<strong
+              >isoler les ressources</strong
+            >
+            entre conteneurs. Chaque conteneur a sa propre "vision" du système.
+          </p>
           <ul>
-            <li><strong>User</strong> — UID/GID isolés, propre <code>root</code> local</li>
-            <li><strong>PID</strong> — chaque conteneur a ses propres identifiants de processus</li>
-            <li><strong>Network</strong> — interfaces réseau, IP et routes indépendantes</li>
-            <li><strong>Mount</strong> — arborescence du système de fichiers isolée</li>
+            <li>
+              <strong>User</strong> — UID/GID isolés, propre
+              <code>root</code> local
+            </li>
+            <li>
+              <strong>PID</strong> — chaque conteneur a ses propres identifiants
+              de processus
+            </li>
+            <li>
+              <strong>Network</strong> — interfaces réseau, IP et routes
+              indépendantes
+            </li>
+            <li>
+              <strong>Mount</strong> — arborescence du système de fichiers
+              isolée
+            </li>
             <li><strong>UTS</strong> — hostname et domaine DNS distincts</li>
-            <li><strong>IPC</strong> — mémoire partagée, sémaphores et files de messages isolés</li>
+            <li>
+              <strong>IPC</strong> — mémoire partagée, sémaphores et files de
+              messages isolés
+            </li>
           </ul>
         </div>
 
         <div class="section" id="ch1-cgroups">
           <h3>Cgroups (Control Groups)</h3>
-          <p>Fonctionnalité du noyau Linux pour <strong>limiter, compter et isoler</strong> l'usage des ressources (CPU, mémoire, disque, réseau) d'un groupe de processus.</p>
+          <p>
+            Fonctionnalité du noyau Linux pour
+            <strong>limiter, compter et isoler</strong> l'usage des ressources
+            (CPU, mémoire, disque, réseau) d'un groupe de processus.
+          </p>
           <ul>
-            <li><strong>Limitation</strong> — quota de mémoire, CPU, disque ou réseau</li>
-            <li><strong>Comptabilité</strong> — suivi de la consommation par groupe</li>
-            <li><strong>Priorisation</strong> — part de CPU/I-O plus importante pour certains groupes</li>
-            <li><strong>Isolation</strong> — chaque groupe fonctionne indépendamment</li>
-            <li><strong>Contrôle</strong> — gel ou sauvegarde de l'état d'un groupe</li>
+            <li>
+              <strong>Limitation</strong> — quota de mémoire, CPU, disque ou
+              réseau
+            </li>
+            <li>
+              <strong>Comptabilité</strong> — suivi de la consommation par
+              groupe
+            </li>
+            <li>
+              <strong>Priorisation</strong> — part de CPU/I-O plus importante
+              pour certains groupes
+            </li>
+            <li>
+              <strong>Isolation</strong> — chaque groupe fonctionne
+              indépendamment
+            </li>
+            <li>
+              <strong>Contrôle</strong> — gel ou sauvegarde de l'état d'un
+              groupe
+            </li>
           </ul>
           <div class="callout tip">
             <div class="callout-title">💡 Namespaces + Cgroups</div>
-            <strong>Namespaces</strong> = isolation | <strong>Cgroups</strong> = contrôle des ressources. Ensemble, ils forment la base des conteneurs LXC et Docker.
+            <strong>Namespaces</strong> = isolation | <strong>Cgroups</strong> =
+            contrôle des ressources. Ensemble, ils forment la base des
+            conteneurs LXC et Docker.
           </div>
         </div>
 
         <div class="section" id="ch1-docker-def">
           <h3>C'est quoi Docker ?</h3>
-          <p>Plate-forme ouverte (lancée en <strong>2013</strong> par Solomon Hykes / dotCloud) pour empaqueter et exécuter des applications dans des conteneurs isolés sur n'importe quel serveur.</p>
+          <p>
+            Plate-forme ouverte (lancée en <strong>2013</strong> par Solomon
+            Hykes / dotCloud) pour empaqueter et exécuter des applications dans
+            des conteneurs isolés sur n'importe quel serveur.
+          </p>
           <ul>
-            <li><strong>Virtualisation légère</strong> — noyau partagé, pas de noyau propre</li>
-            <li><strong>Namespaces &amp; cgroups</strong> — isolation + gestion des ressources</li>
-            <li><strong>Copy-on-Write (COW)</strong> — optimisation de l'espace disque</li>
-            <li><strong>Déploiement instantané</strong> — pas besoin de démarrer un OS complet</li>
-            <li><strong>Adapté aux microservices</strong> — portable, scalable, léger</li>
+            <li>
+              <strong>Virtualisation légère</strong> — noyau partagé, pas de
+              noyau propre
+            </li>
+            <li>
+              <strong>Namespaces &amp; cgroups</strong> — isolation + gestion
+              des ressources
+            </li>
+            <li>
+              <strong>Copy-on-Write (COW)</strong> — optimisation de l'espace
+              disque
+            </li>
+            <li>
+              <strong>Déploiement instantané</strong> — pas besoin de démarrer
+              un OS complet
+            </li>
+            <li>
+              <strong>Adapté aux microservices</strong> — portable, scalable,
+              léger
+            </li>
           </ul>
         </div>
 
@@ -360,12 +471,27 @@
           <h3>Architecture Docker</h3>
           <p>Architecture <strong>client-serveur</strong> :</p>
           <ul>
-            <li><strong>Docker Client</strong> — CLI (Linux) ou Remote API (Mac/Windows) ; envoie les commandes au daemon</li>
-            <li><strong>Docker Daemon (dockerd)</strong> — cœur de Docker ; gère conteneurs, images, volumes, réseaux</li>
-            <li><strong>REST API</strong> — communication standardisée client ↔ daemon</li>
+            <li>
+              <strong>Docker Client</strong> — CLI (Linux) ou Remote API
+              (Mac/Windows) ; envoie les commandes au daemon
+            </li>
+            <li>
+              <strong>Docker Daemon (dockerd)</strong> — cœur de Docker ; gère
+              conteneurs, images, volumes, réseaux
+            </li>
+            <li>
+              <strong>REST API</strong> — communication standardisée client ↔
+              daemon
+            </li>
             <li><strong>Docker Engine</strong> = Client + REST API + Daemon</li>
-            <li><strong>Docker Registry / Hub</strong> — stockage et partage d'images (public = Docker Hub)</li>
-            <li><strong>Image</strong> — template immuable | <strong>Conteneur</strong> — instance en cours d'exécution</li>
+            <li>
+              <strong>Docker Registry / Hub</strong> — stockage et partage
+              d'images (public = Docker Hub)
+            </li>
+            <li>
+              <strong>Image</strong> — template immuable |
+              <strong>Conteneur</strong> — instance en cours d'exécution
+            </li>
           </ul>
         </div>
 
@@ -373,22 +499,48 @@
           <h3>Container Runtime : containerd, runc &amp; libcontainer</h3>
           <div class="callout info">
             <div class="callout-title">Chaîne d'exécution</div>
-            <strong>Docker Daemon</strong> → <strong>containerd</strong> (haut niveau) → <strong>runc</strong> (bas niveau, conforme OCI) → <strong>libcontainer</strong> (noyau Linux)
+            <strong>Docker Daemon</strong> → <strong>containerd</strong> (haut
+            niveau) → <strong>runc</strong> (bas niveau, conforme OCI) →
+            <strong>libcontainer</strong> (noyau Linux)
           </div>
           <ul>
-            <li><strong>containerd</strong> — gère le cycle de vie des conteneurs, images et volumes ; utilisé aussi par Kubernetes</li>
-            <li><strong>runc</strong> — exécute les conteneurs en utilisant namespaces et cgroups via libcontainer ; conforme à la spec OCI</li>
-            <li><strong>libcontainer</strong> — bibliothèque bas niveau liant Docker au noyau Linux (namespaces, cgroups, réseau, pare-feu) sans dépendre de LXC</li>
-            <li><strong>OCI</strong> — normes ouvertes : <em>Runtime Spec</em> (exécution) &amp; <em>Image Spec</em> (format d'image)</li>
+            <li>
+              <strong>containerd</strong> — gère le cycle de vie des conteneurs,
+              images et volumes ; utilisé aussi par Kubernetes
+            </li>
+            <li>
+              <strong>runc</strong> — exécute les conteneurs en utilisant
+              namespaces et cgroups via libcontainer ; conforme à la spec OCI
+            </li>
+            <li>
+              <strong>libcontainer</strong> — bibliothèque bas niveau liant
+              Docker au noyau Linux (namespaces, cgroups, réseau, pare-feu) sans
+              dépendre de LXC
+            </li>
+            <li>
+              <strong>OCI</strong> — normes ouvertes :
+              <em>Runtime Spec</em> (exécution) &amp;
+              <em>Image Spec</em> (format d'image)
+            </li>
           </ul>
         </div>
 
         <div class="section" id="ch1-image-vs-conteneur">
           <h3>Image vs Conteneur vs Dockerfile</h3>
           <ul>
-            <li><strong>Image Docker</strong> — modèle statique immuable (OS + app + dépendances) ; créée via Dockerfile ou téléchargée depuis un Registry</li>
-            <li><strong>Dockerfile</strong> — fichier d'instructions pour construire une image</li>
-            <li><strong>Conteneur Docker</strong> — instance exécutable d'une image ; isolé, avec son propre cycle de vie</li>
+            <li>
+              <strong>Image Docker</strong> — modèle statique immuable (OS + app
+              + dépendances) ; créée via Dockerfile ou téléchargée depuis un
+              Registry
+            </li>
+            <li>
+              <strong>Dockerfile</strong> — fichier d'instructions pour
+              construire une image
+            </li>
+            <li>
+              <strong>Conteneur Docker</strong> — instance exécutable d'une
+              image ; isolé, avec son propre cycle de vie
+            </li>
           </ul>
           <div class="callout info">
             <div class="callout-title">🔄 Cycle de vie</div>
