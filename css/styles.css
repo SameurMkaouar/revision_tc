@@ -1,0 +1,839 @@
+/* ═══════════════════ RESET & BASE ═══════════════════ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #191919;
+  --bg-surface: #1e1e1e;
+  --bg-card: #252525;
+  --bg-hover: #2c2c2c;
+  --bg-code: #2f2f2f;
+  --border: #333;
+  --text: #e0e0e0;
+  --text-dim: #9a9a9a;
+  --text-muted: #6b6b6b;
+  --accent: #529cca;
+  --accent2: #e07b53;
+  --accent3: #6bc77a;
+  --accent4: #c9a253;
+  --purple: #b07acc;
+  --radius: 8px;
+  --sidebar-w: 280px;
+  --font:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono:
+    "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 3px;
+}
+
+/* ═══════════════════ SIDEBAR ═══════════════════ */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  z-index: 100;
+  padding: 24px 0;
+  transition: transform 0.3s ease;
+}
+.sidebar-header {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+.sidebar-header .logo {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 4px;
+}
+.sidebar-header h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+.sidebar nav {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ─── Flat nav items ─────────────────────────────────── */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-dim);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-item:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+.nav-item.active {
+  background: rgba(82, 156, 202, 0.12);
+  color: var(--text);
+  font-weight: 600;
+}
+.nav-item-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.nav-item-icon {
+  font-size: 14px;
+}
+.nav-item-label {
+  flex: 1;
+  line-height: 1.3;
+}
+
+/* ═══════════════════ MAIN ═══════════════════ */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  max-width: 820px;
+  padding: 48px 56px 120px;
+}
+
+/* ═══════════════ MOBILE TOGGLE (legacy, replaced by app-bar) ═══════════════ */
+.menu-toggle {
+  display: none;
+}
+
+/* ═══════════════════ HOMEPAGE ═══════════════════ */
+.hero {
+  margin-bottom: 56px;
+}
+.hero .badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(82, 156, 202, 0.12);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+}
+.hero h1 {
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+.hero h1 .grad {
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero p {
+  font-size: 16px;
+  color: var(--text-dim);
+  max-width: 600px;
+}
+
+.chapter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 32px;
+}
+.chapter-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  color: inherit;
+}
+.chapter-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+.chapter-card .card-num {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.chapter-card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.chapter-card p {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+/* ═══════════════════ CHAPTERS (hidden by default) ═══════════════════ */
+.chapter {
+  display: none;
+}
+.chapter.active {
+  display: block;
+}
+#home.active {
+  display: block;
+}
+
+/* ═══════════════════ TYPOGRAPHY ═══════════════════ */
+.chapter-header {
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.chapter-header .ch-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+}
+.chapter-header h2 {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.section {
+  margin-bottom: 48px;
+}
+.section h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.section h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 20px 0 10px;
+  color: var(--accent);
+}
+.section p,
+.section li {
+  margin-bottom: 10px;
+  color: var(--text-dim);
+}
+.section ul,
+.section ol {
+  padding-left: 24px;
+  margin-bottom: 16px;
+}
+.section li {
+  margin-bottom: 6px;
+}
+.section strong {
+  color: var(--text);
+}
+
+/* ═══════════════════ CALLOUTS ═══════════════════ */
+.callout {
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  margin: 20px 0;
+  border-left: 3px solid;
+  font-size: 14px;
+}
+.callout.info {
+  background: rgba(82, 156, 202, 0.08);
+  border-color: var(--accent);
+}
+.callout.warn {
+  background: rgba(201, 162, 83, 0.08);
+  border-color: var(--accent4);
+}
+.callout.tip {
+  background: rgba(107, 199, 122, 0.08);
+  border-color: var(--accent3);
+}
+.callout.def {
+  background: rgba(176, 122, 204, 0.08);
+  border-color: var(--purple);
+}
+.callout-title {
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+/* ═══════════════════ CODE ═══════════════════ */
+code {
+  font-family: var(--mono);
+  font-size: 13px;
+  background: var(--bg-code);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--accent2);
+}
+pre {
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 16px 0;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+  position: relative;
+}
+pre code {
+  background: none;
+  padding: 0;
+  color: var(--text);
+}
+.cmd {
+  color: var(--accent3);
+}
+.flag {
+  color: var(--accent4);
+}
+.val {
+  color: var(--accent2);
+}
+
+/* Copy button */
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  opacity: 0;
+  font-family: var(--font);
+  letter-spacing: 0.3px;
+}
+pre:hover .copy-btn,
+pre:focus-within .copy-btn {
+  opacity: 1;
+}
+.copy-btn:hover {
+  background: var(--bg-card);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.copy-btn.copied {
+  color: var(--accent3);
+  border-color: var(--accent3);
+  opacity: 1;
+}
+
+/* ═══════════════════ TABLES ═══════════════════ */
+.table-wrap {
+  overflow-x: auto;
+  margin: 20px 0;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+th {
+  background: var(--bg-code);
+  text-align: left;
+  padding: 10px 14px;
+  font-weight: 600;
+  color: var(--text);
+  border-bottom: 2px solid var(--border);
+}
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-dim);
+}
+tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* ═══════════════════ TAGS ═══════════════════ */
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.tag.blue {
+  background: rgba(82, 156, 202, 0.15);
+  color: var(--accent);
+}
+.tag.green {
+  background: rgba(107, 199, 122, 0.15);
+  color: var(--accent3);
+}
+.tag.orange {
+  background: rgba(224, 123, 83, 0.15);
+  color: var(--accent2);
+}
+.tag.purple {
+  background: rgba(176, 122, 204, 0.15);
+  color: var(--purple);
+}
+
+/* ═══════════════════ DIVIDERS ═══════════════════ */
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 32px 0;
+}
+
+/* ═══════════════════ LIGHT THEME ═══════════════════ */
+[data-theme="light"] {
+  --bg: #f5f5f5;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-hover: #eaeaea;
+  --bg-code: #f0f0f0;
+  --border: #ddd;
+  --text: #1a1a1a;
+  --text-dim: #555;
+  --text-muted: #888;
+  --accent: #2e7bb5;
+  --accent2: #c7582a;
+  --accent3: #2d8c3e;
+  --accent4: #a67e1a;
+  --purple: #8a4daf;
+}
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #bbb;
+}
+[data-theme="light"] .chapter-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+[data-theme="light"] tr:hover td {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+/* ═══════ THEME TOGGLE ═══════ */
+.theme-toggle {
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    transform 0.3s ease;
+  flex-shrink: 0;
+  padding: 0;
+}
+.theme-toggle:hover {
+  background: var(--bg-card);
+  border-color: var(--accent);
+  transform: rotate(25deg);
+}
+.theme-toggle svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: opacity 0.25s ease;
+}
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE APP BAR
+═══════════════════════════════════════════════════════ */
+.app-bar {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  height: 56px;
+  padding: 0 12px;
+  padding-top: env(safe-area-inset-top);
+  height: calc(56px + env(safe-area-inset-top));
+  background: rgba(30, 30, 30, 0.88);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+[data-theme="light"] .app-bar {
+  background: rgba(255, 255, 255, 0.88);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+.app-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.app-bar-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+.app-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Hamburger button in app bar */
+.app-bar-hamburger {
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, border-color 0.15s;
+}
+.app-bar-hamburger:active {
+  background: var(--bg-card);
+  border-color: var(--accent);
+}
+.app-bar-hamburger span {
+  display: block;
+  width: 16px;
+  height: 2px;
+  background: var(--text-dim);
+  border-radius: 1px;
+  transition: transform 0.2s, opacity 0.2s;
+}
+.app-bar-hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.app-bar-hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+.app-bar-hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SIDEBAR BACKDROP OVERLAY
+═══════════════════════════════════════════════════════ */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  z-index: 150;
+  transition: background 0.3s ease;
+}
+.sidebar-overlay.visible {
+  display: block;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+/* ═══════════════════════════════════════════════════════
+   READING PROGRESS BAR (mobile)
+═══════════════════════════════════════════════════════ */
+.reading-progress {
+  display: none;
+  position: fixed;
+  top: calc(56px + env(safe-area-inset-top));
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--purple));
+  z-index: 199;
+  transition: width 0.1s linear;
+  border-radius: 0 2px 2px 0;
+  width: 0%;
+}
+
+/* ═══════════════════ PAGE TRANSITIONS ═══════════════════ */
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.chapter.page-enter {
+  animation: pageIn 0.22s ease forwards;
+}
+
+/* ═══════════════════ TABLET ═══════════════════ */
+@media (max-width: 900px) {
+  .main {
+    padding: 32px 24px 80px;
+    max-width: 100%;
+  }
+  .chapter-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE — iOS & Android (≤ 768px)
+═══════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Base body adjustments */
+  body {
+    font-size: 14px;
+    line-height: 1.65;
+    /* Prevent overscroll rubber-band on iOS from causing layout issues */
+    overscroll-behavior-y: contain;
+  }
+
+  /* Offset for app-bar at top */
+  .main {
+    margin-left: 0;
+    padding: 16px 16px 32px;
+    margin-top: calc(56px + env(safe-area-inset-top));
+    margin-bottom: 0;
+  }
+
+  /* Show the mobile app bar */
+  .app-bar {
+    display: flex;
+  }
+
+  /* Show reading progress */
+  .reading-progress {
+    display: block;
+  }
+
+  /* Sidebar becomes a full overlay drawer */
+  .sidebar {
+    transform: translateX(-100%);
+    width: 290px;
+    z-index: 220;
+    padding-top: calc(16px + env(safe-area-inset-top));
+    box-shadow: none;
+    transition: transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                box-shadow 0.28s ease;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 8px 0 40px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Chapter header */
+  .chapter-header {
+    margin-bottom: 28px;
+    padding-bottom: 18px;
+  }
+  .chapter-header h2 {
+    font-size: 22px;
+  }
+
+  /* Section headers */
+  .section {
+    margin-bottom: 36px;
+  }
+  .section h3 {
+    font-size: 17px;
+  }
+  .section h4 {
+    font-size: 14px;
+  }
+
+  /* Hero */
+  .hero {
+    margin-bottom: 32px;
+  }
+  .hero h1 {
+    font-size: 26px;
+  }
+  .hero p {
+    font-size: 14px;
+  }
+
+  /* Chapter cards */
+  .chapter-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .chapter-card {
+    padding: 16px 18px;
+    border-radius: 12px;
+    /* Make tap targets big enough */
+    min-height: 80px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .chapter-card:active {
+    transform: scale(0.98);
+    transition: transform 0.1s;
+  }
+
+  /* Code blocks */
+  pre {
+    font-size: 11.5px;
+    padding: 14px 14px 14px 14px;
+    border-radius: 10px;
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+  }
+  pre .copy-btn {
+    opacity: 1; /* always visible on touch devices */
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+
+  /* Tables */
+  .table-wrap {
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    -webkit-overflow-scrolling: touch;
+    overflow: hidden;
+  }
+  .table-wrap table {
+    min-width: 420px;
+  }
+  th, td {
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+
+  /* Callouts */
+  .callout {
+    padding: 12px 14px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+
+  /* Tags */
+  .tag {
+    padding: 3px 9px;
+    font-size: 11px;
+  }
+
+  /* Nav items: bigger tap targets in sidebar */
+  .nav-item {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   LIGHT THEME — MOBILE COMPONENTS
+═══════════════════════════════════════════════════════ */
+[data-theme="light"] .sidebar-overlay.visible {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* ═══════════════════════════════════════════════════════
+   VERY SMALL SCREENS (≤ 380px — older iPhones, small Android)
+═══════════════════════════════════════════════════════ */
+@media (max-width: 380px) {
+  .main {
+    padding: 12px 12px 28px;
+  }
+  .hero h1 {
+    font-size: 22px;
+  }
+  pre {
+    font-size: 11px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   LANDSCAPE MOBILE (short height, wide screen)
+═══════════════════════════════════════════════════════ */
+@media (max-width: 900px) and (max-height: 500px) and (orientation: landscape) {
+  .app-bar {
+    height: calc(44px + env(safe-area-inset-top));
+    padding-top: env(safe-area-inset-top);
+  }
+  .main {
+    margin-top: calc(44px + env(safe-area-inset-top));
+    margin-bottom: 0;
+  }
+  .reading-progress {
+    top: calc(44px + env(safe-area-inset-top));
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   SWIPE DRAG FEEDBACK (added by JS for drag animation)
+═══════════════════════════════════════════════════════ */
+.sidebar.dragging {
+  transition: none !important;
+}

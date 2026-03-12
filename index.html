@@ -1,545 +1,66 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#191919" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f5f5f5" media="(prefers-color-scheme: light)" />
     <title>TC Revision — Techniques de Conteneurisation</title>
-    <style>
-      /* ═══════════════════ RESET & BASE ═══════════════════ */
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      :root {
-        --bg: #191919;
-        --bg-surface: #1e1e1e;
-        --bg-card: #252525;
-        --bg-hover: #2c2c2c;
-        --bg-code: #2f2f2f;
-        --border: #333;
-        --text: #e0e0e0;
-        --text-dim: #9a9a9a;
-        --text-muted: #6b6b6b;
-        --accent: #529cca;
-        --accent2: #e07b53;
-        --accent3: #6bc77a;
-        --accent4: #c9a253;
-        --purple: #b07acc;
-        --radius: 8px;
-        --sidebar-w: 280px;
-        --font:
-          "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        --mono:
-          "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
-      }
-
-      html {
-        scroll-behavior: smooth;
-      }
-      body {
-        font-family: var(--font);
-        background: var(--bg);
-        color: var(--text);
-        line-height: 1.7;
-        font-size: 15px;
-        display: flex;
-        min-height: 100vh;
-      }
-
-      /* scrollbar */
-      ::-webkit-scrollbar {
-        width: 6px;
-      }
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #444;
-        border-radius: 3px;
-      }
-
-      /* ═══════════════════ SIDEBAR ═══════════════════ */
-      .sidebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: var(--sidebar-w);
-        height: 100vh;
-        background: var(--bg-surface);
-        border-right: 1px solid var(--border);
-        overflow-y: auto;
-        z-index: 100;
-        padding: 24px 0;
-        transition: transform 0.3s ease;
-      }
-      .sidebar-header {
-        padding: 0 20px 20px;
-        border-bottom: 1px solid var(--border);
-        margin-bottom: 12px;
-      }
-      .sidebar-header .logo {
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-dim);
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        margin-bottom: 4px;
-      }
-      .sidebar-header h2 {
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--text);
-      }
-      .sidebar nav {
-        padding: 0 8px;
-      }
-
-      .nav-section {
-        margin-bottom: 4px;
-      }
-      .nav-section-title {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 12px;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-dim);
-        cursor: pointer;
-        border-radius: var(--radius);
-        transition: background 0.15s;
-        user-select: none;
-      }
-      .nav-section-title:hover {
-        background: var(--bg-hover);
-      }
-      .nav-section-title .chev {
-        font-size: 10px;
-        transition: transform 0.2s;
-        color: var(--text-muted);
-      }
-      .nav-section.open .chev {
-        transform: rotate(90deg);
-      }
-      .nav-section-title .dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        flex-shrink: 0;
-      }
-
-      .nav-links {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.35s ease;
-      }
-      .nav-section.open .nav-links {
-        max-height: 600px;
-      }
-
-      .nav-links a {
-        display: block;
-        padding: 5px 12px 5px 32px;
-        font-size: 13px;
-        color: var(--text-muted);
-        text-decoration: none;
-        border-radius: var(--radius);
-        transition: all 0.15s;
-      }
-      .nav-links a:hover {
-        background: var(--bg-hover);
-        color: var(--text);
-      }
-      .nav-links a.active {
-        color: var(--accent);
-        background: rgba(82, 156, 202, 0.08);
-      }
-
-      /* ═══════════════════ MAIN ═══════════════════ */
-      .main {
-        margin-left: var(--sidebar-w);
-        flex: 1;
-        max-width: 820px;
-        padding: 48px 56px 120px;
-      }
-
-      /* ═══════════════ MOBILE TOGGLE ═══════════════ */
-      .menu-toggle {
-        display: none;
-        position: fixed;
-        top: 16px;
-        left: 16px;
-        z-index: 200;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        color: var(--text);
-        width: 40px;
-        height: 40px;
-        border-radius: var(--radius);
-        font-size: 18px;
-        cursor: pointer;
-        align-items: center;
-        justify-content: center;
-      }
-
-      /* ═══════════════════ HOMEPAGE ═══════════════════ */
-      .hero {
-        margin-bottom: 56px;
-      }
-      .hero .badge {
-        display: inline-block;
-        padding: 4px 12px;
-        background: rgba(82, 156, 202, 0.12);
-        color: var(--accent);
-        font-size: 12px;
-        font-weight: 600;
-        border-radius: 20px;
-        margin-bottom: 16px;
-        letter-spacing: 0.5px;
-      }
-      .hero h1 {
-        font-size: 36px;
-        font-weight: 800;
-        line-height: 1.2;
-        margin-bottom: 12px;
-      }
-      .hero h1 .grad {
-        background: linear-gradient(135deg, var(--accent), var(--purple));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-      .hero p {
-        font-size: 16px;
-        color: var(--text-dim);
-        max-width: 600px;
-      }
-
-      .chapter-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-        margin-top: 32px;
-      }
-      .chapter-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 24px;
-        cursor: pointer;
-        transition: all 0.2s;
-        text-decoration: none;
-        color: inherit;
-      }
-      .chapter-card:hover {
-        border-color: var(--accent);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-      }
-      .chapter-card .card-num {
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 8px;
-      }
-      .chapter-card h3 {
-        font-size: 15px;
-        font-weight: 600;
-        margin-bottom: 8px;
-      }
-      .chapter-card p {
-        font-size: 13px;
-        color: var(--text-dim);
-        line-height: 1.5;
-      }
-
-      /* ═══════════════════ CHAPTERS (hidden by default) ═══════════════════ */
-      .chapter {
-        display: none;
-      }
-      .chapter.active {
-        display: block;
-      }
-      #home.active {
-        display: block;
-      }
-
-      /* ═══════════════════ TYPOGRAPHY ═══════════════════ */
-      .chapter-header {
-        margin-bottom: 40px;
-        padding-bottom: 24px;
-        border-bottom: 1px solid var(--border);
-      }
-      .chapter-header .ch-label {
-        font-size: 12px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        margin-bottom: 8px;
-      }
-      .chapter-header h2 {
-        font-size: 30px;
-        font-weight: 800;
-        line-height: 1.2;
-      }
-
-      .section {
-        margin-bottom: 48px;
-      }
-      .section h3 {
-        font-size: 20px;
-        font-weight: 700;
-        margin-bottom: 16px;
-        padding-bottom: 8px;
-        border-bottom: 1px solid var(--border);
-      }
-      .section h4 {
-        font-size: 16px;
-        font-weight: 600;
-        margin: 20px 0 10px;
-        color: var(--accent);
-      }
-      .section p,
-      .section li {
-        margin-bottom: 10px;
-        color: var(--text-dim);
-      }
-      .section ul,
-      .section ol {
-        padding-left: 24px;
-        margin-bottom: 16px;
-      }
-      .section li {
-        margin-bottom: 6px;
-      }
-      .section strong {
-        color: var(--text);
-      }
-
-      /* ═══════════════════ CALLOUTS ═══════════════════ */
-      .callout {
-        padding: 16px 20px;
-        border-radius: var(--radius);
-        margin: 20px 0;
-        border-left: 3px solid;
-        font-size: 14px;
-      }
-      .callout.info {
-        background: rgba(82, 156, 202, 0.08);
-        border-color: var(--accent);
-      }
-      .callout.warn {
-        background: rgba(201, 162, 83, 0.08);
-        border-color: var(--accent4);
-      }
-      .callout.tip {
-        background: rgba(107, 199, 122, 0.08);
-        border-color: var(--accent3);
-      }
-      .callout.def {
-        background: rgba(176, 122, 204, 0.08);
-        border-color: var(--purple);
-      }
-      .callout-title {
-        font-weight: 700;
-        font-size: 13px;
-        margin-bottom: 6px;
-        color: var(--text);
-      }
-
-      /* ═══════════════════ CODE ═══════════════════ */
-      code {
-        font-family: var(--mono);
-        font-size: 13px;
-        background: var(--bg-code);
-        padding: 2px 6px;
-        border-radius: 4px;
-        color: var(--accent2);
-      }
-      pre {
-        background: var(--bg-code);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 16px 20px;
-        margin: 16px 0;
-        overflow-x: auto;
-        font-size: 13px;
-        line-height: 1.6;
-      }
-      pre code {
-        background: none;
-        padding: 0;
-        color: var(--text);
-      }
-      .cmd {
-        color: var(--accent3);
-      }
-      .flag {
-        color: var(--accent4);
-      }
-      .val {
-        color: var(--accent2);
-      }
-
-      /* ═══════════════════ TABLES ═══════════════════ */
-      .table-wrap {
-        overflow-x: auto;
-        margin: 20px 0;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 13px;
-      }
-      th {
-        background: var(--bg-code);
-        text-align: left;
-        padding: 10px 14px;
-        font-weight: 600;
-        color: var(--text);
-        border-bottom: 2px solid var(--border);
-      }
-      td {
-        padding: 10px 14px;
-        border-bottom: 1px solid var(--border);
-        color: var(--text-dim);
-      }
-      tr:hover td {
-        background: rgba(255, 255, 255, 0.02);
-      }
-
-      /* ═══════════════════ TAGS ═══════════════════ */
-      .tag {
-        display: inline-block;
-        padding: 2px 8px;
-        border-radius: 4px;
-        font-size: 11px;
-        font-weight: 600;
-      }
-      .tag.blue {
-        background: rgba(82, 156, 202, 0.15);
-        color: var(--accent);
-      }
-      .tag.green {
-        background: rgba(107, 199, 122, 0.15);
-        color: var(--accent3);
-      }
-      .tag.orange {
-        background: rgba(224, 123, 83, 0.15);
-        color: var(--accent2);
-      }
-      .tag.purple {
-        background: rgba(176, 122, 204, 0.15);
-        color: var(--purple);
-      }
-
-      /* ═══════════════════ DIVIDERS ═══════════════════ */
-      hr {
-        border: none;
-        border-top: 1px solid var(--border);
-        margin: 32px 0;
-      }
-
-      /* ═══════════════════ LIGHT THEME ═══════════════════ */
-      [data-theme="light"] {
-        --bg: #f5f5f5;
-        --bg-surface: #ffffff;
-        --bg-card: #ffffff;
-        --bg-hover: #eaeaea;
-        --bg-code: #f0f0f0;
-        --border: #ddd;
-        --text: #1a1a1a;
-        --text-dim: #555;
-        --text-muted: #888;
-        --accent: #2e7bb5;
-        --accent2: #c7582a;
-        --accent3: #2d8c3e;
-        --accent4: #a67e1a;
-        --purple: #8a4daf;
-      }
-      [data-theme="light"] ::-webkit-scrollbar-thumb {
-        background: #bbb;
-      }
-      [data-theme="light"] .chapter-card:hover {
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      }
-      [data-theme="light"] tr:hover td {
-        background: rgba(0, 0, 0, 0.02);
-      }
-
-      /* ═══════ THEME TOGGLE ═══════ */
-      .theme-toggle {
-        background: var(--bg-hover);
-        border: 1px solid var(--border);
-        color: var(--text);
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition:
-          background 0.2s,
-          border-color 0.2s,
-          transform 0.3s ease;
-        flex-shrink: 0;
-        padding: 0;
-      }
-      .theme-toggle:hover {
-        background: var(--bg-card);
-        border-color: var(--accent);
-        transform: rotate(25deg);
-      }
-      .theme-toggle svg {
-        width: 18px;
-        height: 18px;
-        fill: none;
-        stroke: currentColor;
-        stroke-width: 2;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        transition: opacity 0.25s ease;
-      }
-
-      /* ═══════════════════ RESPONSIVE ═══════════════════ */
-      @media (max-width: 900px) {
-        .main {
-          padding: 32px 24px 80px;
-          max-width: 100%;
-        }
-        .chapter-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-      @media (max-width: 768px) {
-        .sidebar {
-          transform: translateX(-100%);
-        }
-        .sidebar.open {
-          transform: translateX(0);
-        }
-        .main {
-          margin-left: 0;
-        }
-        .menu-toggle {
-          display: flex;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="css/styles.css" />
+    <!-- Prevent dark/light flash before JS loads -->
+    <script>
+      (function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+    </script>
   </head>
   <body>
-    <!-- ============ MOBILE TOGGLE ============ -->
-    <button
-      class="menu-toggle"
-      onclick="document.querySelector('.sidebar').classList.toggle('open')"
-    >
-      ☰
-    </button>
+    <!-- ============ READING PROGRESS BAR ============ -->
+    <div class="reading-progress" id="reading-progress"></div>
+
+    <!-- ============ MOBILE APP BAR ============ -->
+    <header class="app-bar">
+      <div class="app-bar-left">
+        <button
+          class="app-bar-hamburger"
+          id="app-bar-hamburger"
+          onclick="toggleSidebar()"
+          aria-label="Menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+      <span class="app-bar-title" id="app-bar-title">Accueil</span>
+      <div class="app-bar-right">
+        <button
+          class="theme-toggle"
+          onclick="toggleTheme()"
+          title="Basculer clair/sombre"
+          aria-label="Changer le thème"
+        >
+          <svg class="icon-moon" viewBox="0 0 24 24">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+          <svg class="icon-sun" style="display: none" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============ SIDEBAR OVERLAY (backdrop) ============ -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
     <!-- ============ SIDEBAR ============ -->
     <aside class="sidebar">
@@ -576,176 +97,38 @@
         <h2>Techniques de Conteneurisation</h2>
       </div>
       <nav>
-        <!-- Home -->
-        <div class="nav-section open">
-          <div class="nav-section-title" onclick="showPage('home')">
-            <span style="font-size: 14px">🏠</span> Accueil
-          </div>
-        </div>
-
-        <!-- Ch1 -->
-        <div class="nav-section">
-          <div class="nav-section-title" onclick="toggleNav(this)">
-            <span class="chev">▶</span>
-            <span class="dot" style="background: var(--accent)"></span>
-            Ch.1 — Concepts & Architecture
-          </div>
-          <div class="nav-links">
-            <a onclick="showPage('ch1')" href="#ch1-industry"
-              >L'industrie a changé</a
-            >
-            <a onclick="showPage('ch1')" href="#ch1-why"
-              >Pourquoi les conteneurs?</a
-            >
-            <a onclick="showPage('ch1')" href="#ch1-solution"
-              >Solution : Les conteneurs</a
-            >
-            <a onclick="showPage('ch1')" href="#ch1-vs">Conteneur vs VM</a>
-          </div>
-        </div>
-
-        <!-- Ch2 -->
-        <div class="nav-section">
-          <div class="nav-section-title" onclick="toggleNav(this)">
-            <span class="chev">▶</span>
-            <span class="dot" style="background: var(--accent3)"></span>
-            Ch.2 — Installation & Config
-          </div>
-          <div class="nav-links">
-            <a onclick="showPage('ch2')" href="#ch2-multiplateforme"
-              >Multiplateforme</a
-            >
-            <a onclick="showPage('ch2')" href="#ch2-install">Installation</a>
-            <a onclick="showPage('ch2')" href="#ch2-syntax">Syntaxe CLI</a>
-            <a onclick="showPage('ch2')" href="#ch2-run"
-              >Instanciation & Exécution</a
-            >
-          </div>
-        </div>
-
-        <!-- Ch3 -->
-        <div class="nav-section">
-          <div class="nav-section-title" onclick="toggleNav(this)">
-            <span class="chev">▶</span>
-            <span class="dot" style="background: var(--accent2)"></span>
-            Ch.3 — Gestion des Images
-          </div>
-          <div class="nav-links">
-            <a onclick="showPage('ch3')" href="#ch3-what"
-              >Qu'est-ce qu'une image?</a
-            >
-            <a onclick="showPage('ch3')" href="#ch3-diff">Image vs Conteneur</a>
-            <a onclick="showPage('ch3')" href="#ch3-ns">Namespaces</a>
-            <a onclick="showPage('ch3')" href="#ch3-create"
-              >Création d'images</a
-            >
-            <a onclick="showPage('ch3')" href="#ch3-dockerfile"
-              >Dockerfile DSL</a
-            >
-            <a onclick="showPage('ch3')" href="#ch3-multi">Multi-stage build</a>
-            <a onclick="showPage('ch3')" href="#ch3-cmds">Commandes de base</a>
-          </div>
-        </div>
-
-        <!-- Ch4 -->
-        <div class="nav-section">
-          <div class="nav-section-title" onclick="toggleNav(this)">
-            <span class="chev">▶</span>
-            <span class="dot" style="background: var(--accent4)"></span>
-            Ch.4 — Gestion des Volumes
-          </div>
-          <div class="nav-links">
-            <a onclick="showPage('ch4')" href="#ch4-intro">Introduction & FS</a>
-            <a onclick="showPage('ch4')" href="#ch4-overlay">Overlay2 FS</a>
-            <a onclick="showPage('ch4')" href="#ch4-bind">Bind Mounts</a>
-            <a onclick="showPage('ch4')" href="#ch4-volumes"
-              >Volumes de données</a
-            >
-            <a onclick="showPage('ch4')" href="#ch4-anon">Volumes anonymes</a>
-            <a onclick="showPage('ch4')" href="#ch4-named">Volumes nommés</a>
-          </div>
-        </div>
-
-        <!-- Ch5.1 -->
-        <div class="nav-section">
-          <div class="nav-section-title" onclick="toggleNav(this)">
-            <span class="chev">▶</span>
-            <span class="dot" style="background: var(--purple)"></span>
-            Ch.5.1 — Réseaux
-          </div>
-          <div class="nav-links">
-            <a onclick="showPage('ch5_1')" href="#ch51-why"
-              >Pourquoi le réseau?</a
-            >
-            <a onclick="showPage('ch5_1')" href="#ch51-drivers"
-              >Network Drivers</a
-            >
-            <a onclick="showPage('ch5_1')" href="#ch51-cmds"
-              >Commandes réseau</a
-            >
-            <a onclick="showPage('ch5_1')" href="#ch51-default"
-              >Default Bridge</a
-            >
-            <a onclick="showPage('ch5_1')" href="#ch51-user"
-              >User-Defined Bridge</a
-            >
-            <a onclick="showPage('ch5_1')" href="#ch51-compare">Comparaison</a>
-            <a onclick="showPage('ch5_1')" href="#ch51-host">Réseau Host</a>
-            <a onclick="showPage('ch5_1')" href="#ch51-wordpress"
-              >Exemple WordPress</a
-            >
-          </div>
-        </div>
-
-        <!-- Ch5.2 -->
-        <div class="nav-section">
-          <div class="nav-section-title" onclick="toggleNav(this)">
-            <span class="chev">▶</span>
-            <span class="dot" style="background: var(--accent)"></span>
-            Ch.5.2 — Docker Compose
-          </div>
-          <div class="nav-links">
-            <a onclick="showPage('ch5_2')" href="#ch52-intro">Introduction</a>
-            <a onclick="showPage('ch5_2')" href="#ch52-cmds"
-              >Commandes de base</a
-            >
-            <a onclick="showPage('ch5_2')" href="#ch52-yml"
-              >Structure docker-compose.yml</a
-            >
-            <a onclick="showPage('ch5_2')" href="#ch52-wp"
-              >Exemple: WordPress</a
-            >
-            <a onclick="showPage('ch5_2')" href="#ch52-build"
-              >Exemple: Build + Image</a
-            >
-          </div>
-        </div>
-
-        <!-- Ch5.3 -->
-        <div class="nav-section">
-          <div class="nav-section-title" onclick="toggleNav(this)">
-            <span class="chev">▶</span>
-            <span class="dot" style="background: var(--accent2)"></span>
-            Ch.5.3 — Docker Swarm
-          </div>
-          <div class="nav-links">
-            <a onclick="showPage('ch5_3')" href="#ch53-intro">Introduction</a>
-            <a onclick="showPage('ch5_3')" href="#ch53-arch">Architecture</a>
-            <a onclick="showPage('ch5_3')" href="#ch53-services"
-              >Services & Tâches</a
-            >
-            <a onclick="showPage('ch5_3')" href="#ch53-manage"
-              >Gestion du Swarm</a
-            >
-            <a onclick="showPage('ch5_3')" href="#ch53-nodes"
-              >Gestion des nœuds</a
-            >
-            <a onclick="showPage('ch5_3')" href="#ch53-deploy"
-              >Déploiement & Scaling</a
-            >
-            <a onclick="showPage('ch5_3')" href="#ch53-stack">Docker Stack</a>
-          </div>
-        </div>
+        <button class="nav-item active" data-page="home" onclick="showPage('home')">
+          <span class="nav-item-icon">🏠</span>
+          <span class="nav-item-label">Accueil</span>
+        </button>
+        <button class="nav-item" data-page="ch1" onclick="showPage('ch1')">
+          <span class="nav-item-dot" style="background: var(--accent)"></span>
+          <span class="nav-item-label">Ch.1 — Concepts & Architecture</span>
+        </button>
+        <button class="nav-item" data-page="ch2" onclick="showPage('ch2')">
+          <span class="nav-item-dot" style="background: var(--accent3)"></span>
+          <span class="nav-item-label">Ch.2 — Installation & Config</span>
+        </button>
+        <button class="nav-item" data-page="ch3" onclick="showPage('ch3')">
+          <span class="nav-item-dot" style="background: var(--accent2)"></span>
+          <span class="nav-item-label">Ch.3 — Gestion des Images</span>
+        </button>
+        <button class="nav-item" data-page="ch4" onclick="showPage('ch4')">
+          <span class="nav-item-dot" style="background: var(--accent4)"></span>
+          <span class="nav-item-label">Ch.4 — Gestion des Volumes</span>
+        </button>
+        <button class="nav-item" data-page="ch5_1" onclick="showPage('ch5_1')">
+          <span class="nav-item-dot" style="background: var(--purple)"></span>
+          <span class="nav-item-label">Ch.5.1 — Réseaux</span>
+        </button>
+        <button class="nav-item" data-page="ch5_2" onclick="showPage('ch5_2')">
+          <span class="nav-item-dot" style="background: var(--accent)"></span>
+          <span class="nav-item-label">Ch.5.2 — Docker Compose</span>
+        </button>
+        <button class="nav-item" data-page="ch5_3" onclick="showPage('ch5_3')">
+          <span class="nav-item-dot" style="background: var(--accent2)"></span>
+          <span class="nav-item-label">Ch.5.3 — Docker Swarm</span>
+        </button>
       </nav>
     </aside>
 
@@ -2906,93 +2289,6 @@ networks:
     </main>
 
     <!-- ============ JAVASCRIPT ============ -->
-    <script>
-      // ─── Theme toggle ───
-      function setThemeIcon(theme) {
-        var moon = document.querySelector(".icon-moon");
-        var sun = document.querySelector(".icon-sun");
-        if (!moon || !sun) return;
-        if (theme === "light") {
-          moon.style.display = "none";
-          sun.style.display = "block";
-        } else {
-          moon.style.display = "block";
-          sun.style.display = "none";
-        }
-      }
-      function toggleTheme() {
-        var html = document.documentElement;
-        var current = html.getAttribute("data-theme");
-        var next = current === "light" ? "dark" : "light";
-        html.setAttribute("data-theme", next);
-        localStorage.setItem("theme", next);
-        setThemeIcon(next);
-      }
-      // Apply saved theme on load
-      (function () {
-        var saved = localStorage.getItem("theme");
-        if (saved) {
-          document.documentElement.setAttribute("data-theme", saved);
-        }
-      })();
-      // Set icon after DOM ready
-      document.addEventListener("DOMContentLoaded", function () {
-        var theme = document.documentElement.getAttribute("data-theme");
-        setThemeIcon(theme || "dark");
-      });
-
-      function showPage(id) {
-        document
-          .querySelectorAll(".chapter")
-          .forEach((c) => c.classList.remove("active"));
-        const target = document.getElementById(id);
-        if (target) target.classList.add("active");
-        // Close mobile sidebar
-        document.querySelector(".sidebar").classList.remove("open");
-        // Scroll to top of main
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-
-      function toggleNav(el) {
-        const section = el.parentElement;
-        section.classList.toggle("open");
-      }
-
-      // Handle hash navigation
-      document.querySelectorAll(".nav-links a").forEach((a) => {
-        a.addEventListener("click", function (e) {
-          // Let the page switch happen, then scroll to anchor
-          const href = this.getAttribute("href");
-          if (href && href.startsWith("#")) {
-            setTimeout(() => {
-              const el = document.getElementById(href.substring(1));
-              if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-            }, 100);
-          }
-        });
-      });
-
-      // Mark active nav link on scroll
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              document
-                .querySelectorAll(".nav-links a")
-                .forEach((a) => a.classList.remove("active"));
-              const link = document.querySelector(
-                `.nav-links a[href="#${entry.target.id}"]`,
-              );
-              if (link) link.classList.add("active");
-            }
-          });
-        },
-        { threshold: 0.3 },
-      );
-
-      document
-        .querySelectorAll(".section[id]")
-        .forEach((s) => observer.observe(s));
-    </script>
+    <script src="js/app.js"></script>
   </body>
 </html>
