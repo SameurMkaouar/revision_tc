@@ -170,72 +170,84 @@ function addCopyButtons() {
   // Swipe right from anywhere in left 35% of screen to open
   // Swipe left from anywhere to close when sidebar is open
   const OPEN_ZONE_RATIO = 0.35; // % of screen width that triggers open-swipe
-  const SWIPE_THRESHOLD = 48;   // min px horizontal travel to commit
+  const SWIPE_THRESHOLD = 48; // min px horizontal travel to commit
 
-  document.addEventListener('touchstart', function (e) {
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-    isDragging = false;
-    swipeIntent = null;
-  }, { passive: true });
-
-  document.addEventListener('touchmove', function (e) {
-    const dx = e.touches[0].clientX - startX;
-    const dy = e.touches[0].clientY - startY;
-    const sidebar = document.querySelector('.sidebar');
-    const isOpen = sidebar.classList.contains('open');
-
-    if (!isDragging) {
-      // Only commit to horizontal drag when it clearly dominates vertical
-      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
-        isDragging = true;
-        // Decide intent once at the start of the drag
-        const openZone = window.innerWidth * OPEN_ZONE_RATIO;
-        if (!isOpen && dx > 0 && startX < openZone) {
-          swipeIntent = 'open';
-        } else if (isOpen && dx < 0) {
-          swipeIntent = 'close';
-        } else {
-          swipeIntent = null;
-        }
-      }
-    }
-
-    if (!isDragging || !swipeIntent) return;
-
-    if (swipeIntent === 'open') {
-      // Follow finger from left edge — sidebar slides with touch
-      const translateX = Math.min(0, -290 + dx);
-      sidebar.style.transform = `translateX(${translateX}px)`;
-      sidebar.classList.add('dragging');
-    } else if (swipeIntent === 'close') {
-      // Slide sidebar back to the left with finger
-      const translateX = Math.max(-290, dx);
-      sidebar.style.transform = `translateX(${translateX}px)`;
-      sidebar.classList.add('dragging');
-    }
-  }, { passive: true });
-
-  document.addEventListener('touchend', function (e) {
-    const dx = e.changedTouches[0].clientX - startX;
-    const sidebar = document.querySelector('.sidebar');
-    sidebar.classList.remove('dragging');
-    sidebar.style.transform = '';
-
-    if (!isDragging || !swipeIntent) {
+  document.addEventListener(
+    "touchstart",
+    function (e) {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
       isDragging = false;
       swipeIntent = null;
-      return;
-    }
-    isDragging = false;
+    },
+    { passive: true },
+  );
 
-    if (swipeIntent === 'open' && dx > SWIPE_THRESHOLD) {
-      openSidebar();
-    } else if (swipeIntent === 'close' && dx < -SWIPE_THRESHOLD) {
-      closeSidebar();
-    }
-    swipeIntent = null;
-  }, { passive: true });
+  document.addEventListener(
+    "touchmove",
+    function (e) {
+      const dx = e.touches[0].clientX - startX;
+      const dy = e.touches[0].clientY - startY;
+      const sidebar = document.querySelector(".sidebar");
+      const isOpen = sidebar.classList.contains("open");
+
+      if (!isDragging) {
+        // Only commit to horizontal drag when it clearly dominates vertical
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
+          isDragging = true;
+          // Decide intent once at the start of the drag
+          const openZone = window.innerWidth * OPEN_ZONE_RATIO;
+          if (!isOpen && dx > 0 && startX < openZone) {
+            swipeIntent = "open";
+          } else if (isOpen && dx < 0) {
+            swipeIntent = "close";
+          } else {
+            swipeIntent = null;
+          }
+        }
+      }
+
+      if (!isDragging || !swipeIntent) return;
+
+      if (swipeIntent === "open") {
+        // Follow finger from left edge — sidebar slides with touch
+        const translateX = Math.min(0, -290 + dx);
+        sidebar.style.transform = `translateX(${translateX}px)`;
+        sidebar.classList.add("dragging");
+      } else if (swipeIntent === "close") {
+        // Slide sidebar back to the left with finger
+        const translateX = Math.max(-290, dx);
+        sidebar.style.transform = `translateX(${translateX}px)`;
+        sidebar.classList.add("dragging");
+      }
+    },
+    { passive: true },
+  );
+
+  document.addEventListener(
+    "touchend",
+    function (e) {
+      const dx = e.changedTouches[0].clientX - startX;
+      const sidebar = document.querySelector(".sidebar");
+      sidebar.classList.remove("dragging");
+      sidebar.style.transform = "";
+
+      if (!isDragging || !swipeIntent) {
+        isDragging = false;
+        swipeIntent = null;
+        return;
+      }
+      isDragging = false;
+
+      if (swipeIntent === "open" && dx > SWIPE_THRESHOLD) {
+        openSidebar();
+      } else if (swipeIntent === "close" && dx < -SWIPE_THRESHOLD) {
+        closeSidebar();
+      }
+      swipeIntent = null;
+    },
+    { passive: true },
+  );
 })();
 
 /* ─── Scroll handlers ───────────────────────────────────── */
