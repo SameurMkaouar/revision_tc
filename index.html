@@ -244,9 +244,10 @@
         <div class="section" id="ch1-industry">
           <h3>L'industrie des logiciels a changé</h3>
           <p>
-            L'industrie du logiciel est passée des <strong>architectures monolithiques</strong>
-            (tout en un seul bloc) aux <strong>microservices</strong> (services indépendants),
-            pour gagner en rapidité, flexibilité et scalabilité.
+            L'industrie du logiciel est passée des
+            <strong>architectures monolithiques</strong> (tout en un seul bloc)
+            aux <strong>microservices</strong> (services indépendants), pour
+            gagner en rapidité, flexibilité et scalabilité.
           </p>
           <div class="table-wrap">
             <table>
@@ -258,11 +259,18 @@
               </thead>
               <tbody>
                 <tr>
-                  <td>App unique, toutes fonctionnalités imbriquées (BDD, logique, UI)</td>
-                  <td>Petits services indépendants, chacun dédié à une fonction</td>
+                  <td>
+                    App unique, toutes fonctionnalités imbriquées (BDD, logique,
+                    UI)
+                  </td>
+                  <td>
+                    Petits services indépendants, chacun dédié à une fonction
+                  </td>
                 </tr>
                 <tr>
-                  <td>Cycles longs — redéploiement complet à chaque modification</td>
+                  <td>
+                    Cycles longs — redéploiement complet à chaque modification
+                  </td>
                   <td>Déploiement et mise à jour indépendants par service</td>
                 </tr>
                 <tr>
@@ -277,20 +285,34 @@
         <div class="section" id="ch1-why">
           <h3>Motivation : Pourquoi les conteneurs ?</h3>
           <p>
-            Imaginons un projet avec <strong>Node.js, MongoDB, Redis et Ansible</strong>.
-            Chaque outil a ses propres dépendances et versions — ce qui crée une série de
+            Imaginons un projet avec
+            <strong>Node.js, MongoDB, Redis et Ansible</strong>. Chaque outil a
+            ses propres dépendances et versions — ce qui crée une série de
             problèmes appelée la <em>Matrice d'Enfer</em> :
           </p>
           <ul>
-            <li><strong>Compatibilité OS</strong> — certains services ne fonctionnent pas avec la même version de l'OS</li>
-            <li><strong>Conflits de bibliothèques</strong> — service A veut lib v1, service B veut lib v2</li>
-            <li><strong>Mise à niveau risquée</strong> — vérification de compatibilité à chaque upgrade</li>
-            <li><strong>Différences Dev / Test / Prod</strong> — comportement non garanti selon l'environnement</li>
+            <li>
+              <strong>Compatibilité OS</strong> — certains services ne
+              fonctionnent pas avec la même version de l'OS
+            </li>
+            <li>
+              <strong>Conflits de bibliothèques</strong> — service A veut lib
+              v1, service B veut lib v2
+            </li>
+            <li>
+              <strong>Mise à niveau risquée</strong> — vérification de
+              compatibilité à chaque upgrade
+            </li>
+            <li>
+              <strong>Différences Dev / Test / Prod</strong> — comportement non
+              garanti selon l'environnement
+            </li>
           </ul>
           <div class="callout warn">
             <div class="callout-title">⚠️ The Matrix from Hell</div>
-            Interdépendances complexes, conflits de versions, configurations spécifiques à gérer →
-            la <strong>conteneurisation</strong> est la solution.
+            Interdépendances complexes, conflits de versions, configurations
+            spécifiques à gérer → la <strong>conteneurisation</strong> est la
+            solution.
           </div>
         </div>
 
@@ -299,31 +321,44 @@
           <p>
             Chaque composant (Node.js, MongoDB…) s'exécute dans un
             <strong>conteneur séparé</strong> avec ses propres dépendances, tous
-            sur le même OS. On ne configure le moteur de conteneurisation qu'une seule fois.
+            sur le même OS. On ne configure le moteur de conteneurisation qu'une
+            seule fois.
           </p>
           <div class="callout def">
             <div class="callout-title">📦 Définition</div>
-            Un conteneur = application + dépendances + bibliothèques + binaires + config,
-            dans un seul package isolé. Tous les conteneurs
+            Un conteneur = application + dépendances + bibliothèques + binaires
+            + config, dans un seul package isolé. Tous les conteneurs
             <strong>partagent le même noyau</strong> de l'hôte.
           </div>
           <ul>
-            <li>Environnements <strong>complètement isolés</strong> (processus, interfaces réseau, points de montage)</li>
-            <li>Un hôte Ubuntu peut exécuter des conteneurs Fedora, CentOS… car le noyau Linux est commun</li>
-            <li><strong>Légers</strong> : un seul noyau pour toutes les instances → réduction de la consommation de ressources</li>
+            <li>
+              Environnements <strong>complètement isolés</strong> (processus,
+              interfaces réseau, points de montage)
+            </li>
+            <li>
+              Un hôte Ubuntu peut exécuter des conteneurs Fedora, CentOS… car le
+              noyau Linux est commun
+            </li>
+            <li>
+              <strong>Légers</strong> : un seul noyau pour toutes les instances
+              → réduction de la consommation de ressources
+            </li>
           </ul>
           <div class="callout tip">
             <div class="callout-title">💡 Avantages clés</div>
-            Flexibles · Légers · Interchangeables · <strong>Portables</strong> (dev → cloud → prod sans friction) · Évolutifs (scalabilité ciblée)
+            Flexibles · Légers · Interchangeables ·
+            <strong>Portables</strong> (dev → cloud → prod sans friction) ·
+            Évolutifs (scalabilité ciblée)
           </div>
         </div>
 
         <div class="section" id="ch1-vs">
           <h3>Conteneur vs Machine Virtuelle</h3>
           <p>
-            Une <strong>VM</strong> émule un ordinateur complet avec son propre OS sur un hyperviseur
-            (<em>virtualisation lourde</em>). Un <strong>conteneur</strong> partage le noyau de l'hôte
-            et isole uniquement l'application (<em>virtualisation légère</em>).
+            Une <strong>VM</strong> émule un ordinateur complet avec son propre
+            OS sur un hyperviseur (<em>virtualisation lourde</em>). Un
+            <strong>conteneur</strong> partage le noyau de l'hôte et isole
+            uniquement l'application (<em>virtualisation légère</em>).
           </p>
           <div class="table-wrap">
             <table>
@@ -378,108 +413,191 @@
         <div class="section" id="ch1-namespaces">
           <h3>Namespaces</h3>
           <p>
-            Sans namespaces, tous les processus partagent les mêmes ressources : même hostname,
-            PIDs globaux, même réseau, mêmes montages. Les <strong>namespaces</strong> sont une
-            fonctionnalité du noyau Linux qui permettent de <strong>diviser ces ressources</strong>
-            en sous-environnements isolés — chaque conteneur obtient sa propre "vision" indépendante du système.
+            Sans namespaces, tous les processus partagent les mêmes ressources :
+            même hostname, PIDs globaux, même réseau, mêmes montages. Les
+            <strong>namespaces</strong> sont une fonctionnalité du noyau Linux
+            qui permettent de <strong>diviser ces ressources</strong>
+            en sous-environnements isolés — chaque conteneur obtient sa propre
+            "vision" indépendante du système.
           </p>
           <ul>
-            <li><strong>User</strong> — UID/GID isolés ; chaque conteneur a son propre <code>root</code> local sans privilèges réels sur l'hôte</li>
-            <li><strong>PID</strong> — chaque conteneur a ses propres identifiants de processus ; le PID 1 d'un conteneur est son processus principal</li>
-            <li><strong>Network</strong> — interfaces réseau, adresses IP et routes indépendantes par conteneur</li>
-            <li><strong>Mount</strong> — arborescence du système de fichiers isolée ; le conteneur ne voit pas les montages des autres</li>
-            <li><strong>UTS</strong> — hostname et domaine DNS distincts par conteneur</li>
-            <li><strong>IPC</strong> — mémoire partagée, sémaphores et files de messages isolés entre conteneurs</li>
+            <li>
+              <strong>User</strong> — UID/GID isolés ; chaque conteneur a son
+              propre <code>root</code> local sans privilèges réels sur l'hôte
+            </li>
+            <li>
+              <strong>PID</strong> — chaque conteneur a ses propres identifiants
+              de processus ; le PID 1 d'un conteneur est son processus principal
+            </li>
+            <li>
+              <strong>Network</strong> — interfaces réseau, adresses IP et
+              routes indépendantes par conteneur
+            </li>
+            <li>
+              <strong>Mount</strong> — arborescence du système de fichiers
+              isolée ; le conteneur ne voit pas les montages des autres
+            </li>
+            <li>
+              <strong>UTS</strong> — hostname et domaine DNS distincts par
+              conteneur
+            </li>
+            <li>
+              <strong>IPC</strong> — mémoire partagée, sémaphores et files de
+              messages isolés entre conteneurs
+            </li>
           </ul>
         </div>
 
         <div class="section" id="ch1-cgroups">
           <h3>Cgroups (Control Groups)</h3>
           <p>
-            Les <strong>cgroups</strong> sont une fonctionnalité du noyau Linux permettant de
-            <strong>limiter, comptabiliser et isoler</strong> l'utilisation des ressources
-            (CPU, mémoire, disque, réseau) d'un groupe de processus. Ils garantissent qu'un
-            conteneur ne peut pas monopoliser les ressources de l'hôte.
+            Les <strong>cgroups</strong> sont une fonctionnalité du noyau Linux
+            permettant de
+            <strong>limiter, comptabiliser et isoler</strong> l'utilisation des
+            ressources (CPU, mémoire, disque, réseau) d'un groupe de processus.
+            Ils garantissent qu'un conteneur ne peut pas monopoliser les
+            ressources de l'hôte.
           </p>
           <ul>
-            <li><strong>Limitation</strong> — fixe un quota max de mémoire, CPU, disque ou réseau par groupe</li>
-            <li><strong>Comptabilité</strong> — mesure la consommation réelle de chaque groupe (utile pour la facturation)</li>
-            <li><strong>Priorisation</strong> — certains groupes obtiennent une part plus grande de CPU ou de bande passante I/O</li>
-            <li><strong>Isolation</strong> — chaque groupe fonctionne indépendamment sans interférer avec les autres</li>
-            <li><strong>Contrôle</strong> — possibilité de geler l'exécution d'un groupe ou de sauvegarder/restaurer son état</li>
+            <li>
+              <strong>Limitation</strong> — fixe un quota max de mémoire, CPU,
+              disque ou réseau par groupe
+            </li>
+            <li>
+              <strong>Comptabilité</strong> — mesure la consommation réelle de
+              chaque groupe (utile pour la facturation)
+            </li>
+            <li>
+              <strong>Priorisation</strong> — certains groupes obtiennent une
+              part plus grande de CPU ou de bande passante I/O
+            </li>
+            <li>
+              <strong>Isolation</strong> — chaque groupe fonctionne
+              indépendamment sans interférer avec les autres
+            </li>
+            <li>
+              <strong>Contrôle</strong> — possibilité de geler l'exécution d'un
+              groupe ou de sauvegarder/restaurer son état
+            </li>
           </ul>
           <div class="callout tip">
-            <div class="callout-title">💡 Namespaces + Cgroups = base des conteneurs</div>
-            <strong>Namespaces</strong> isolent l'environnement (chaque conteneur voit son propre monde).
-            <strong>Cgroups</strong> contrôlent les ressources (quota CPU, mémoire). Ensemble, ils
-            constituent la fondation technologique de LXC et Docker.
+            <div class="callout-title">
+              💡 Namespaces + Cgroups = base des conteneurs
+            </div>
+            <strong>Namespaces</strong> isolent l'environnement (chaque
+            conteneur voit son propre monde).
+            <strong>Cgroups</strong> contrôlent les ressources (quota CPU,
+            mémoire). Ensemble, ils constituent la fondation technologique de
+            LXC et Docker.
           </div>
         </div>
 
         <div class="section" id="ch1-docker-def">
           <h3>C'est quoi Docker ?</h3>
           <p>
-            Lancé en <strong>2013</strong> par Solomon Hykes (dotCloud), Docker est une
-            <strong>plate-forme ouverte</strong> permettant d'empaqueter une application et ses
-            dépendances dans un conteneur isolé, exécutable sur n'importe quel serveur.
-            Docker a simplifié LXC en proposant une interface conviviale et des outils d'automatisation.
+            Lancé en <strong>2013</strong> par Solomon Hykes (dotCloud), Docker
+            est une <strong>plate-forme ouverte</strong> permettant d'empaqueter
+            une application et ses dépendances dans un conteneur isolé,
+            exécutable sur n'importe quel serveur. Docker a simplifié LXC en
+            proposant une interface conviviale et des outils d'automatisation.
           </p>
           <ul>
-            <li><strong>Virtualisation légère</strong> — noyau de l'hôte partagé, pas de noyau propre par conteneur</li>
-            <li><strong>Namespaces &amp; cgroups</strong> — isolation de l'environnement + contrôle des ressources</li>
-            <li><strong>Copy-on-Write (COW)</strong> — optimisation de l'espace disque lors de la création de conteneurs</li>
-            <li><strong>Déploiement instantané</strong> — pas besoin de démarrer un OS complet, création en quelques secondes</li>
-            <li><strong>Adapté aux microservices</strong> — portable, scalable, léger, idéal pour le cloud</li>
+            <li>
+              <strong>Virtualisation légère</strong> — noyau de l'hôte partagé,
+              pas de noyau propre par conteneur
+            </li>
+            <li>
+              <strong>Namespaces &amp; cgroups</strong> — isolation de
+              l'environnement + contrôle des ressources
+            </li>
+            <li>
+              <strong>Copy-on-Write (COW)</strong> — optimisation de l'espace
+              disque lors de la création de conteneurs
+            </li>
+            <li>
+              <strong>Déploiement instantané</strong> — pas besoin de démarrer
+              un OS complet, création en quelques secondes
+            </li>
+            <li>
+              <strong>Adapté aux microservices</strong> — portable, scalable,
+              léger, idéal pour le cloud
+            </li>
           </ul>
         </div>
 
         <div class="section" id="ch1-architecture">
           <h3>Architecture Docker</h3>
           <p>
-            Docker repose sur une architecture <strong>client-serveur</strong> : le
-            <em>Docker Client</em> envoie des commandes au <em>Docker Daemon</em> qui les exécute.
-            Ils peuvent être sur la même machine ou communiquer en réseau.
+            Docker repose sur une architecture <strong>client-serveur</strong> :
+            le <em>Docker Client</em> envoie des commandes au
+            <em>Docker Daemon</em> qui les exécute. Ils peuvent être sur la même
+            machine ou communiquer en réseau.
           </p>
           <ul>
-            <li><strong>Docker Client</strong> — interface utilisateur : Docker CLI (Linux) ou Remote API (Mac/Windows) ; envoie les commandes au daemon</li>
-            <li><strong>Docker Daemon (dockerd)</strong> — cœur de Docker ; reçoit et traite les requêtes (gestion des conteneurs, images, volumes, réseaux)</li>
-            <li><strong>REST API</strong> — canal de communication standardisé entre le client et le daemon</li>
-            <li><strong>Docker Engine</strong> = Client + REST API + Daemon — permet de créer, exécuter et partager des conteneurs</li>
-            <li><strong>Docker Registry / Hub</strong> — bibliothèque d'images Docker (public = Docker Hub, privé possible) ; le daemon y récupère les images nécessaires</li>
-            <li><strong>Image</strong> — template statique immuable | <strong>Conteneur</strong> — instance active en cours d'exécution d'une image</li>
+            <li>
+              <strong>Docker Client</strong> — interface utilisateur : Docker
+              CLI (Linux) ou Remote API (Mac/Windows) ; envoie les commandes au
+              daemon
+            </li>
+            <li>
+              <strong>Docker Daemon (dockerd)</strong> — cœur de Docker ; reçoit
+              et traite les requêtes (gestion des conteneurs, images, volumes,
+              réseaux)
+            </li>
+            <li>
+              <strong>REST API</strong> — canal de communication standardisé
+              entre le client et le daemon
+            </li>
+            <li>
+              <strong>Docker Engine</strong> = Client + REST API + Daemon —
+              permet de créer, exécuter et partager des conteneurs
+            </li>
+            <li>
+              <strong>Docker Registry / Hub</strong> — bibliothèque d'images
+              Docker (public = Docker Hub, privé possible) ; le daemon y
+              récupère les images nécessaires
+            </li>
+            <li>
+              <strong>Image</strong> — template statique immuable |
+              <strong>Conteneur</strong> — instance active en cours d'exécution
+              d'une image
+            </li>
           </ul>
         </div>
 
         <div class="section" id="ch1-runtime">
           <h3>Container Runtime : containerd, runc &amp; libcontainer</h3>
           <p>
-            Docker ne gère pas directement l'exécution des conteneurs — il délègue à une
-            chaîne de runtimes spécialisés :
+            Docker ne gère pas directement l'exécution des conteneurs — il
+            délègue à une chaîne de runtimes spécialisés :
           </p>
           <div class="callout info">
             <div class="callout-title">Chaîne d'exécution</div>
-            <strong>Docker Daemon</strong> → <strong>containerd</strong> (haut niveau)
-            → <strong>runc</strong> (bas niveau, conforme OCI) →
+            <strong>Docker Daemon</strong> → <strong>containerd</strong> (haut
+            niveau) → <strong>runc</strong> (bas niveau, conforme OCI) →
             <strong>libcontainer</strong> (noyau Linux)
           </div>
           <ul>
             <li>
-              <strong>containerd</strong> — runtime haut niveau ; gère le cycle de vie des conteneurs
-              (lancement, arrêt, suppression), les images et volumes. Intégré à Docker,
-              mais aussi utilisé seul par <em>Kubernetes</em>
+              <strong>containerd</strong> — runtime haut niveau ; gère le cycle
+              de vie des conteneurs (lancement, arrêt, suppression), les images
+              et volumes. Intégré à Docker, mais aussi utilisé seul par
+              <em>Kubernetes</em>
             </li>
             <li>
-              <strong>runc</strong> — runtime léger bas niveau ; exécute le conteneur dans un
-              environnement isolé via namespaces et cgroups. Conforme à la spec <strong>OCI Runtime</strong>
+              <strong>runc</strong> — runtime léger bas niveau ; exécute le
+              conteneur dans un environnement isolé via namespaces et cgroups.
+              Conforme à la spec <strong>OCI Runtime</strong>
             </li>
             <li>
-              <strong>libcontainer</strong> — bibliothèque bas niveau liant runc directement au
-              noyau Linux (namespaces, cgroups, interfaces réseau, pare-feu) sans dépendre de LXC
+              <strong>libcontainer</strong> — bibliothèque bas niveau liant runc
+              directement au noyau Linux (namespaces, cgroups, interfaces
+              réseau, pare-feu) sans dépendre de LXC
             </li>
             <li>
-              <strong>OCI</strong> (Open Container Initiative) — normes ouvertes garantissant
-              l'interopérabilité : <em>Runtime Spec</em> (comment exécuter) &amp;
-              <em>Image Spec</em> (format des images)
+              <strong>OCI</strong> (Open Container Initiative) — normes ouvertes
+              garantissant l'interopérabilité : <em>Runtime Spec</em> (comment
+              exécuter) &amp; <em>Image Spec</em> (format des images)
             </li>
           </ul>
         </div>
@@ -501,7 +619,8 @@
             <li>
               <strong>Conteneur Docker</strong> — instance active et exécutable
               d'une image. Chaque conteneur est isolé et sécurisé ; actions
-              possibles : <em>exécuter, démarrer, arrêter, déplacer, supprimer</em>
+              possibles :
+              <em>exécuter, démarrer, arrêter, déplacer, supprimer</em>
             </li>
           </ul>
           <div class="callout info">
