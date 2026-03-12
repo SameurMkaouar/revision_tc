@@ -14,6 +14,7 @@ const PAGE_TITLES = {
   ch5_1: "Ch.5.1 — Réseaux",
   ch5_2: "Ch.5.2 — Docker Compose",
   ch5_3: "Ch.5.3 — Docker Swarm",
+  exams: "Examens & Corrections",
 };
 
 /* ─── Theme ─────────────────────────────────────────────── */
@@ -103,6 +104,41 @@ function toggleSidebar() {
   } else {
     openSidebar();
   }
+}
+
+/* ─── Desktop sidebar collapse ─────────────────────────── */
+function syncDesktopSidebarToggleButton() {
+  const btn = document.getElementById("desktop-sidebar-toggle");
+  if (!btn) return;
+
+  const collapsed = document.body.classList.contains("sidebar-collapsed");
+  btn.classList.toggle("collapsed", collapsed);
+  btn.title = collapsed ? "Agrandir le menu" : "Réduire le menu";
+  btn.setAttribute(
+    "aria-label",
+    collapsed ? "Agrandir le menu latéral" : "Réduire le menu latéral",
+  );
+}
+
+function toggleDesktopSidebar(forceState) {
+  if (window.innerWidth <= 768) return;
+
+  const shouldCollapse =
+    typeof forceState === "boolean"
+      ? forceState
+      : !document.body.classList.contains("sidebar-collapsed");
+
+  document.body.classList.toggle("sidebar-collapsed", shouldCollapse);
+  localStorage.setItem("desktopSidebarCollapsed", shouldCollapse ? "1" : "0");
+  syncDesktopSidebarToggleButton();
+}
+
+function initDesktopSidebarState() {
+  const saved = localStorage.getItem("desktopSidebarCollapsed");
+  if (window.innerWidth > 768 && saved === "1") {
+    document.body.classList.add("sidebar-collapsed");
+  }
+  syncDesktopSidebarToggleButton();
 }
 
 /* ─── Reading progress bar ──────────────────────────────── */
@@ -198,6 +234,7 @@ function addTableColumnCopyButtons() {
       th.classList.add("copy-column-header");
       th.style.position = "relative";
       th.title = "Survolez pour copier";
+      const columnTitle = th.textContent.trim();
 
       // Create copy button with SVG icon
       const copyBtn = document.createElement("button");
@@ -215,7 +252,7 @@ function addTableColumnCopyButtons() {
         const columnData = [];
 
         // Get header text
-        const headerText = th.innerText.replace("📋", "").trim();
+        const headerText = columnTitle;
         if (headerText) columnData.push(headerText);
 
         // Get all body rows for this column
@@ -275,6 +312,39 @@ function addTableColumnCopyButtons() {
       });
     });
   });
+}
+
+/* ─── Exams PDF viewer ─────────────────────────────────── */
+function initExamViewer() {
+  const frame = document.getElementById("exam-pdf-frame");
+  const titleEl = document.getElementById("exam-viewer-title");
+  const openNewLink = document.getElementById("exam-open-new");
+  const buttons = Array.from(
+    document.querySelectorAll(".exam-open-btn[data-pdf]"),
+  );
+
+  if (!frame || !titleEl || !openNewLink || buttons.length === 0) return;
+
+  function selectExam(btn) {
+    const pdfPath = btn.getAttribute("data-pdf");
+    const label = btn.getAttribute("data-label") || "Document";
+    if (!pdfPath) return;
+
+    buttons.forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    frame.src = `${pdfPath}#view=FitH`;
+    titleEl.textContent = label;
+    openNewLink.href = pdfPath;
+  }
+
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => selectExam(btn));
+  });
+
+  const defaultBtn =
+    document.querySelector(".exam-open-btn.default[data-pdf]") || buttons[0];
+  if (defaultBtn) selectExam(defaultBtn);
 }
 
 /* ─── Touch swipe gesture for sidebar ───────────────────── */
@@ -407,6 +477,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Add copy-column buttons to all tables
   addTableColumnCopyButtons();
+
+  // Activate exams viewer
+  initExamViewer();
+
+  // Restore desktop sidebar state
+  initDesktopSidebarState();
+
+  // Keep sidebar state sane when screen size changes
+  window.addEventListener("resize", function () {
+    if (window.innerWidth <= 768) {
+      document.body.classList.remove("sidebar-collapsed");
+    }
+    syncDesktopSidebarToggleButton();
+  });
 
   // Wire up sidebar overlay click to close
   const overlay = document.getElementById("sidebar-overlay");

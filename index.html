@@ -91,6 +91,17 @@
         >
           <div class="logo">Revision 2026</div>
           <button
+            id="desktop-sidebar-toggle"
+            class="desktop-sidebar-toggle"
+            onclick="toggleDesktopSidebar()"
+            title="Réduire le menu"
+            aria-label="Réduire le menu latéral"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+          <button
             class="theme-toggle"
             onclick="toggleTheme()"
             title="Basculer clair/sombre"
@@ -117,38 +128,110 @@
         <button
           class="nav-item active"
           data-page="home"
+          data-short="Accueil"
           onclick="showPage('home')"
         >
-          <span class="nav-item-icon">🏠</span>
+          <span class="nav-item-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 10.5L12 3l9 7.5" />
+              <path d="M5 9.5V20h14V9.5" />
+              <path d="M10 20v-6h4v6" />
+            </svg>
+          </span>
           <span class="nav-item-label">Accueil</span>
         </button>
-        <button class="nav-item" data-page="ch1" onclick="showPage('ch1')">
+        <button
+          class="nav-item"
+          data-page="ch1"
+          data-short="Ch.1"
+          onclick="showPage('ch1')"
+        >
           <span class="nav-item-dot" style="background: var(--accent)"></span>
           <span class="nav-item-label">Ch.1 — Concepts & Architecture</span>
         </button>
-        <button class="nav-item" data-page="ch2" onclick="showPage('ch2')">
+        <button
+          class="nav-item"
+          data-page="ch2"
+          data-short="Ch.2"
+          onclick="showPage('ch2')"
+        >
           <span class="nav-item-dot" style="background: var(--accent3)"></span>
           <span class="nav-item-label">Ch.2 — Installation & Config</span>
         </button>
-        <button class="nav-item" data-page="ch3" onclick="showPage('ch3')">
+        <button
+          class="nav-item"
+          data-page="ch3"
+          data-short="Ch.3"
+          onclick="showPage('ch3')"
+        >
           <span class="nav-item-dot" style="background: var(--accent2)"></span>
           <span class="nav-item-label">Ch.3 — Gestion des Images</span>
         </button>
-        <button class="nav-item" data-page="ch4" onclick="showPage('ch4')">
+        <button
+          class="nav-item"
+          data-page="ch4"
+          data-short="Ch.4"
+          onclick="showPage('ch4')"
+        >
           <span class="nav-item-dot" style="background: var(--accent4)"></span>
           <span class="nav-item-label">Ch.4 — Gestion des Volumes</span>
         </button>
-        <button class="nav-item" data-page="ch5_1" onclick="showPage('ch5_1')">
+        <button
+          class="nav-item"
+          data-page="ch5_1"
+          data-short="Ch.5.1"
+          onclick="showPage('ch5_1')"
+        >
           <span class="nav-item-dot" style="background: var(--purple)"></span>
           <span class="nav-item-label">Ch.5.1 — Réseaux</span>
         </button>
-        <button class="nav-item" data-page="ch5_2" onclick="showPage('ch5_2')">
+        <button
+          class="nav-item"
+          data-page="ch5_2"
+          data-short="Ch.5.2"
+          onclick="showPage('ch5_2')"
+        >
           <span class="nav-item-dot" style="background: var(--accent)"></span>
           <span class="nav-item-label">Ch.5.2 — Docker Compose</span>
         </button>
-        <button class="nav-item" data-page="ch5_3" onclick="showPage('ch5_3')">
+        <button
+          class="nav-item"
+          data-page="ch5_3"
+          data-short="Ch.5.3"
+          onclick="showPage('ch5_3')"
+        >
           <span class="nav-item-dot" style="background: var(--accent2)"></span>
           <span class="nav-item-label">Ch.5.3 — Docker Swarm</span>
+        </button>
+        <button
+          class="nav-item"
+          data-page="exams"
+          data-short="Examens"
+          onclick="showPage('exams')"
+        >
+          <span class="nav-item-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M8 3h6l5 5v13H8z" />
+              <path d="M14 3v5h5" />
+              <path d="M11 13h5" />
+              <path d="M11 17h5" />
+              <circle
+                cx="9"
+                cy="13"
+                r="0.8"
+                fill="currentColor"
+                stroke="none"
+              />
+              <circle
+                cx="9"
+                cy="17"
+                r="0.8"
+                fill="currentColor"
+                stroke="none"
+              />
+            </svg>
+          </span>
+          <span class="nav-item-label">Examens & Corrections</span>
         </button>
       </nav>
     </aside>
@@ -231,6 +314,157 @@
               docker stack.
             </p>
           </a>
+          <a class="chapter-card" onclick="showPage('exams')">
+            <div class="card-num" style="color: var(--accent3)">Examens</div>
+            <h3>Examens & Corrections</h3>
+            <p>
+              Consulte les sujets des anciennes sessions avec leur correction
+              associée et visualise les PDF directement dans l'app.
+            </p>
+          </a>
+        </div>
+      </div>
+
+      <!-- ════════════════════════ EXAMS ════════════════════════ -->
+      <div id="exams" class="chapter">
+        <div class="chapter-header">
+          <div class="ch-label" style="color: var(--accent3)">Examens</div>
+          <h2>Examens & Corrections</h2>
+        </div>
+
+        <div class="exams-layout">
+          <div class="exams-list">
+            <div class="exam-item">
+              <div class="exam-item-title">TC Blanc</div>
+              <div class="exam-item-actions">
+                <button
+                  class="exam-open-btn default"
+                  data-pdf="resources/old%20exams/TC_Blanc.pdf"
+                  data-label="TC Blanc - Sujet"
+                >
+                  Sujet
+                </button>
+                <button class="exam-open-btn" disabled>
+                  Pas de correction
+                </button>
+              </div>
+            </div>
+
+            <div class="exam-item">
+              <div class="exam-item-title">TC SP 2021/2022</div>
+              <div class="exam-item-actions">
+                <button
+                  class="exam-open-btn"
+                  data-pdf="resources/old%20exams/TC_SP_2122.pdf"
+                  data-label="TC SP 2021/2022 - Sujet"
+                >
+                  Sujet
+                </button>
+                <button class="exam-open-btn" disabled>
+                  Pas de correction
+                </button>
+              </div>
+            </div>
+
+            <div class="exam-item">
+              <div class="exam-item-title">TC SP 2022/2023</div>
+              <div class="exam-item-actions">
+                <button
+                  class="exam-open-btn"
+                  data-pdf="resources/old%20exams/TC_SP_2223.pdf"
+                  data-label="TC SP 2022/2023 - Sujet"
+                >
+                  Sujet
+                </button>
+                <button class="exam-open-btn" disabled>
+                  Pas de correction
+                </button>
+              </div>
+            </div>
+
+            <div class="exam-item">
+              <div class="exam-item-title">TC SP 2023/2024</div>
+              <div class="exam-item-actions">
+                <button
+                  class="exam-open-btn"
+                  data-pdf="resources/old%20exams/TC_SP_2324.pdf"
+                  data-label="TC SP 2023/2024 - Sujet"
+                >
+                  Sujet
+                </button>
+                <button
+                  class="exam-open-btn"
+                  data-pdf="resources/old%20exams/TC_SP_2324_Corr.pdf"
+                  data-label="TC SP 2023/2024 - Correction"
+                >
+                  Correction
+                </button>
+              </div>
+            </div>
+
+            <div class="exam-item">
+              <div class="exam-item-title">TC SP 2024/2025</div>
+              <div class="exam-item-actions">
+                <button
+                  class="exam-open-btn"
+                  data-pdf="resources/old%20exams/TC_SP_2425.pdf"
+                  data-label="TC SP 2024/2025 - Sujet"
+                >
+                  Sujet
+                </button>
+                <button
+                  class="exam-open-btn"
+                  data-pdf="resources/old%20exams/TC_SP_2425_Corr.pdf"
+                  data-label="TC SP 2024/2025 - Correction"
+                >
+                  Correction
+                </button>
+              </div>
+            </div>
+
+            <div class="exam-item">
+              <div class="exam-item-title">TC SR 2024/2025</div>
+              <div class="exam-item-actions">
+                <button
+                  class="exam-open-btn"
+                  data-pdf="resources/old%20exams/TC_SR_2425.pdf"
+                  data-label="TC SR 2024/2025 - Sujet"
+                >
+                  Sujet
+                </button>
+                <button
+                  class="exam-open-btn"
+                  data-pdf="resources/old%20exams/TC_SR_2425_Corr.pdf"
+                  data-label="TC SR 2024/2025 - Correction"
+                >
+                  Correction
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="exam-viewer-panel">
+            <div class="exam-viewer-toolbar">
+              <div class="exam-viewer-title" id="exam-viewer-title">
+                TC Blanc - Sujet
+              </div>
+              <a
+                id="exam-open-new"
+                class="exam-open-new"
+                href="resources/old%20exams/TC_Blanc.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ouvrir dans un nouvel onglet
+              </a>
+            </div>
+            <iframe
+              id="exam-pdf-frame"
+              class="exam-pdf-frame"
+              src="resources/old%20exams/TC_Blanc.pdf#view=FitH"
+              title="Visualiseur PDF des examens"
+            ></iframe>
+          </div>
         </div>
       </div>
 
