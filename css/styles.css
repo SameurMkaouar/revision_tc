@@ -486,14 +486,13 @@ th.copy-column-header {
 }
 
 th.copy-column-header:hover {
-  background: var(--accent);
-  color: white;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  background: rgba(82, 156, 202, 0.1);
+  border-bottom-color: var(--accent);
 }
 
 th.copy-column-header.copied {
-  background: var(--accent3);
-  color: white;
+  background: rgba(107, 199, 122, 0.1);
+  border-bottom-color: var(--accent3);
 }
 
 /* ─── Toast notification ─────────────────────────────── */
@@ -529,11 +528,9 @@ td {
   transition: background-color 0.15s ease;
 }
 tr:hover td {
-  background: var(--bg-hover);
+  background: rgba(82, 156, 202, 0.05);
   color: var(--text);
 }
-
-/* ═══════════════════ TAGS ═══════════════════ */
 .tag {
   display: inline-block;
   padding: 2px 8px;
@@ -589,7 +586,7 @@ hr {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 [data-theme="light"] tr:hover td {
-  background: var(--bg-hover);
+  background: rgba(46, 123, 181, 0.08);
   color: var(--text);
 }
 
