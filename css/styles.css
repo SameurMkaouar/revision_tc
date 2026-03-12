@@ -24,10 +24,8 @@
   --purple: #b07acc;
   --radius: 8px;
   --sidebar-w: 280px;
-  --font:
-    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --mono:
-    "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+  --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
 }
 
 html {
@@ -109,7 +107,9 @@ body {
   border-radius: var(--radius);
   cursor: pointer;
   text-align: left;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
   -webkit-tap-highlight-color: transparent;
 }
 .nav-item:hover {
@@ -519,14 +519,14 @@ hr {
   background: rgba(30, 30, 30, 0.88);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   align-items: center;
   justify-content: space-between;
   gap: 8px;
 }
 [data-theme="light"] .app-bar {
   background: rgba(255, 255, 255, 0.88);
-  border-bottom: 1px solid rgba(0,0,0,0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 .app-bar-left {
   display: flex;
@@ -567,7 +567,9 @@ hr {
   gap: 5px;
   padding: 0;
   -webkit-tap-highlight-color: transparent;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
 }
 .app-bar-hamburger:active {
   background: var(--bg-card);
@@ -579,7 +581,9 @@ hr {
   height: 2px;
   background: var(--text-dim);
   border-radius: 1px;
-  transition: transform 0.2s, opacity 0.2s;
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
 }
 .app-bar-hamburger.open span:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
@@ -686,8 +690,9 @@ hr {
     z-index: 220;
     padding-top: calc(16px + env(safe-area-inset-top));
     box-shadow: none;
-    transition: transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                box-shadow 0.28s ease;
+    transition:
+      transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      box-shadow 0.28s ease;
   }
   .sidebar.open {
     transform: translateX(0);
@@ -767,7 +772,8 @@ hr {
   .table-wrap table {
     min-width: 420px;
   }
-  th, td {
+  th,
+  td {
     padding: 9px 12px;
     font-size: 12px;
   }
