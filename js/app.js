@@ -497,4 +497,295 @@ document.addEventListener("DOMContentLoaded", function () {
   if (overlay) {
     overlay.addEventListener("click", closeSidebar);
   }
+
+  // Build search index after all content is in the DOM
+  buildSearchIndex();
+});
+
+/* ═══════════════════════════════════════════════════════
+   SEARCH
+═══════════════════════════════════════════════════════ */
+
+let _searchIndex = []; // { pageId, pageTitle, el, tag, text, breadcrumb }
+let _searchFocusedIdx = -1;
+
+// Tags we want to index (ordered by priority)
+const SEARCH_TAGS = ["h3", "h4", "p", "li", "td", "th", "dt", "dd", "code"];
+
+function buildSearchIndex() {
+  _searchIndex = [];
+  const PAGE_ORDER = Object.keys(PAGE_TITLES);
+
+  document.querySelectorAll(".chapter").forEach((chapter) => {
+    // Skip exams page — it has no indexable text (PDFs)
+    if (chapter.id === "exams") return;
+
+    const pageId = chapter.id;
+    const pageTitle = PAGE_TITLES[pageId] || pageId;
+    let currentH3 = "";
+    let currentH4 = "";
+
+    // Walk the chapter and harvest text nodes from target tags
+    const els = chapter.querySelectorAll(SEARCH_TAGS.join(","));
+    els.forEach((el) => {
+      const tag = el.tagName.toLowerCase();
+      const text = el.innerText ? el.innerText.trim() : "";
+      if (!text || text.length < 3) return;
+
+      // Update breadcrumb context
+      if (tag === "h3") {
+        currentH3 = text;
+        currentH4 = "";
+      } else if (tag === "h4") {
+        currentH4 = text;
+      }
+
+      // Build breadcrumb string
+      let breadcrumb = pageTitle;
+      if (currentH3 && tag !== "h3") breadcrumb += " › " + currentH3;
+      if (currentH4 && tag !== "h3" && tag !== "h4") breadcrumb += " › " + currentH4;
+
+      _searchIndex.push({ pageId, pageTitle, el, tag, text, breadcrumb });
+    });
+  });
+}
+
+/* ─── Open / Close ──────────────────────────────────── */
+function openSearch() {
+  const overlay = document.getElementById("search-overlay");
+  const input = document.getElementById("search-input");
+  if (!overlay || !input) return;
+
+  overlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+
+  // Reset state
+  _searchFocusedIdx = -1;
+  input.value = "";
+  document.getElementById("search-clear-btn").style.display = "none";
+  document.getElementById("search-results").innerHTML = "";
+
+  // Focus after animation frame so element is visible
+  requestAnimationFrame(() => input.focus());
+}
+
+function closeSearch() {
+  const overlay = document.getElementById("search-overlay");
+  if (!overlay) return;
+  overlay.classList.remove("open");
+  document.body.style.overflow = "";
+  _searchFocusedIdx = -1;
+}
+
+function handleSearchOverlayClick(e) {
+  // Close if backdrop itself was clicked (not the modal)
+  if (e.target === document.getElementById("search-overlay")) {
+    closeSearch();
+  }
+}
+
+function clearSearch() {
+  const input = document.getElementById("search-input");
+  if (input) {
+    input.value = "";
+    input.focus();
+    performSearch("");
+  }
+}
+
+/* ─── Search logic ──────────────────────────────────── */
+function performSearch(query) {
+  const resultsEl = document.getElementById("search-results");
+  const clearBtn = document.getElementById("search-clear-btn");
+  if (!resultsEl) return;
+
+  const q = query.trim();
+  clearBtn.style.display = q.length > 0 ? "flex" : "none";
+  _searchFocusedIdx = -1;
+
+  if (q.length < 2) {
+    resultsEl.innerHTML = "";
+    return;
+  }
+
+  // Case-insensitive search, accent-insensitive via normalize
+  const normalize = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const nq = normalize(q);
+
+  // Score each result: heading match > text position
+  const matches = [];
+  for (const item of _searchIndex) {
+    const nt = normalize(item.text);
+    const pos = nt.indexOf(nq);
+    if (pos === -1) continue;
+    const tagWeight = { h3: 100, h4: 80, p: 40, li: 35, td: 30, th: 50, dt: 60, dd: 30, code: 25 };
+    const score = (tagWeight[item.tag] || 20) + (pos === 0 ? 20 : 0) - pos * 0.01;
+    matches.push({ item, pos, score });
+  }
+
+  // Sort by score desc, then deduplicate similar text from same page
+  matches.sort((a, b) => b.score - a.score);
+
+  // Limit to top 12 results
+  const seen = new Set();
+  const top = [];
+  for (const m of matches) {
+    const key = m.item.pageId + "::" + m.item.text.slice(0, 60);
+    if (!seen.has(key)) {
+      seen.add(key);
+      top.push(m);
+    }
+    if (top.length >= 12) break;
+  }
+
+  if (top.length === 0) {
+    resultsEl.innerHTML = `<div class="search-empty-state"><strong>Aucun résultat</strong>Essayez un autre mot-clé</div>`;
+    return;
+  }
+
+  resultsEl.innerHTML = top.map((m, i) => buildResultHTML(m.item, q, i)).join("");
+
+  // Wire up click handlers
+  resultsEl.querySelectorAll(".search-result-item").forEach((el, i) => {
+    el.addEventListener("click", () => navigateToResult(top[i].item));
+    el.addEventListener("mouseenter", () => {
+      _searchFocusedIdx = i;
+      updateFocusedResult();
+    });
+  });
+}
+
+function buildResultHTML(item, query, idx) {
+  // Choose icon based on tag type
+  const isHeading = item.tag === "h3" || item.tag === "h4";
+  const isCode = item.tag === "code";
+  const iconSvg = isHeading
+    ? `<svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h8"/></svg>`
+    : isCode
+    ? `<svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`
+    : `<svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="16" y2="18"/><circle cx="3" cy="6" r="1.5" fill="currentColor" stroke="none"/><circle cx="3" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="3" cy="18" r="1.5" fill="currentColor" stroke="none"/></svg>`;
+
+  // Build snippet with highlighted match
+  const snippet = buildSnippet(item.text, query);
+
+  // Title = first 80 chars of text or the heading
+  const title = item.text.length > 80 ? item.text.slice(0, 80) + "…" : item.text;
+  const safeTitle = escapeHtml(title);
+  const safeBreadcrumb = escapeHtml(item.breadcrumb);
+
+  return `<div class="search-result-item" role="option" tabindex="-1" data-idx="${idx}">
+    <div class="search-result-icon">${iconSvg}</div>
+    <div class="search-result-body">
+      <div class="search-result-breadcrumb">${safeBreadcrumb}</div>
+      <div class="search-result-title">${safeTitle}</div>
+      <div class="search-result-snippet">${snippet}</div>
+    </div>
+  </div>`;
+}
+
+function buildSnippet(text, query) {
+  const normalize = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const nText = normalize(text);
+  const nQuery = normalize(query.trim());
+  const pos = nText.indexOf(nQuery);
+
+  if (pos === -1) return escapeHtml(text.slice(0, 120));
+
+  // Show ±60 chars around the match
+  const start = Math.max(0, pos - 60);
+  const end = Math.min(text.length, pos + query.length + 60);
+  let snippet = (start > 0 ? "…" : "") + text.slice(start, end) + (end < text.length ? "…" : "");
+
+  // Highlight the match (case-insensitive, preserving original case)
+  const regex = new RegExp(escapeRegex(query.trim()), "gi");
+  return escapeHtml(snippet).replace(
+    new RegExp(escapeRegex(escapeHtml(query.trim())), "gi"),
+    (m) => `<mark>${m}</mark>`
+  );
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/* ─── Navigate to result ────────────────────────────── */
+function navigateToResult(item) {
+  closeSearch();
+
+  // Switch to the right page first
+  if (_currentPage !== item.pageId) {
+    showPage(item.pageId);
+  }
+
+  // After page transitions / rendering, scroll to element
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const el = item.el;
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+
+      // Flash highlight
+      el.classList.remove("search-highlight-flash");
+      void el.offsetWidth; // trigger reflow to restart animation
+      el.classList.add("search-highlight-flash");
+      setTimeout(() => el.classList.remove("search-highlight-flash"), 2000);
+    });
+  });
+}
+
+/* ─── Keyboard navigation ───────────────────────────── */
+function handleSearchKey(e) {
+  const resultsEl = document.getElementById("search-results");
+  const items = resultsEl ? Array.from(resultsEl.querySelectorAll(".search-result-item")) : [];
+
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    _searchFocusedIdx = Math.min(_searchFocusedIdx + 1, items.length - 1);
+    updateFocusedResult();
+    if (items[_searchFocusedIdx]) items[_searchFocusedIdx].scrollIntoView({ block: "nearest" });
+  } else if (e.key === "ArrowUp") {
+    e.preventDefault();
+    _searchFocusedIdx = Math.max(_searchFocusedIdx - 1, 0);
+    updateFocusedResult();
+    if (items[_searchFocusedIdx]) items[_searchFocusedIdx].scrollIntoView({ block: "nearest" });
+  } else if (e.key === "Enter") {
+    e.preventDefault();
+    if (_searchFocusedIdx >= 0 && items[_searchFocusedIdx]) {
+      items[_searchFocusedIdx].click();
+    }
+  } else if (e.key === "Escape") {
+    closeSearch();
+  }
+}
+
+function updateFocusedResult() {
+  const resultsEl = document.getElementById("search-results");
+  if (!resultsEl) return;
+  resultsEl.querySelectorAll(".search-result-item").forEach((el, i) => {
+    el.classList.toggle("focused", i === _searchFocusedIdx);
+  });
+}
+
+/* ─── Global keyboard shortcut ─────────────────────── */
+document.addEventListener("keydown", function (e) {
+  // Ctrl+K or Cmd+K → open search
+  if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+    e.preventDefault();
+    const overlay = document.getElementById("search-overlay");
+    if (overlay && overlay.classList.contains("open")) {
+      closeSearch();
+    } else {
+      openSearch();
+    }
+    return;
+  }
+  // Escape → close search if open
+  if (e.key === "Escape") {
+    const overlay = document.getElementById("search-overlay");
+    if (overlay && overlay.classList.contains("open")) {
+      closeSearch();
+    }
+  }
 });
