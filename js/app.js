@@ -543,7 +543,8 @@ function buildSearchIndex() {
       // Build breadcrumb string
       let breadcrumb = pageTitle;
       if (currentH3 && tag !== "h3") breadcrumb += " › " + currentH3;
-      if (currentH4 && tag !== "h3" && tag !== "h4") breadcrumb += " › " + currentH4;
+      if (currentH4 && tag !== "h3" && tag !== "h4")
+        breadcrumb += " › " + currentH4;
 
       _searchIndex.push({ pageId, pageTitle, el, tag, text, breadcrumb });
     });
@@ -609,7 +610,11 @@ function performSearch(query) {
   }
 
   // Case-insensitive search, accent-insensitive via normalize
-  const normalize = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const normalize = (s) =>
+    s
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
   const nq = normalize(q);
 
   // Score each result: heading match > text position
@@ -618,8 +623,19 @@ function performSearch(query) {
     const nt = normalize(item.text);
     const pos = nt.indexOf(nq);
     if (pos === -1) continue;
-    const tagWeight = { h3: 100, h4: 80, p: 40, li: 35, td: 30, th: 50, dt: 60, dd: 30, code: 25 };
-    const score = (tagWeight[item.tag] || 20) + (pos === 0 ? 20 : 0) - pos * 0.01;
+    const tagWeight = {
+      h3: 100,
+      h4: 80,
+      p: 40,
+      li: 35,
+      td: 30,
+      th: 50,
+      dt: 60,
+      dd: 30,
+      code: 25,
+    };
+    const score =
+      (tagWeight[item.tag] || 20) + (pos === 0 ? 20 : 0) - pos * 0.01;
     matches.push({ item, pos, score });
   }
 
@@ -643,7 +659,9 @@ function performSearch(query) {
     return;
   }
 
-  resultsEl.innerHTML = top.map((m, i) => buildResultHTML(m.item, q, i)).join("");
+  resultsEl.innerHTML = top
+    .map((m, i) => buildResultHTML(m.item, q, i))
+    .join("");
 
   // Wire up click handlers
   resultsEl.querySelectorAll(".search-result-item").forEach((el, i) => {
@@ -662,14 +680,15 @@ function buildResultHTML(item, query, idx) {
   const iconSvg = isHeading
     ? `<svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h8"/></svg>`
     : isCode
-    ? `<svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`
-    : `<svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="16" y2="18"/><circle cx="3" cy="6" r="1.5" fill="currentColor" stroke="none"/><circle cx="3" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="3" cy="18" r="1.5" fill="currentColor" stroke="none"/></svg>`;
+      ? `<svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`
+      : `<svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="16" y2="18"/><circle cx="3" cy="6" r="1.5" fill="currentColor" stroke="none"/><circle cx="3" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="3" cy="18" r="1.5" fill="currentColor" stroke="none"/></svg>`;
 
   // Build snippet with highlighted match
   const snippet = buildSnippet(item.text, query);
 
   // Title = first 80 chars of text or the heading
-  const title = item.text.length > 80 ? item.text.slice(0, 80) + "…" : item.text;
+  const title =
+    item.text.length > 80 ? item.text.slice(0, 80) + "…" : item.text;
   const safeTitle = escapeHtml(title);
   const safeBreadcrumb = escapeHtml(item.breadcrumb);
 
@@ -684,7 +703,11 @@ function buildResultHTML(item, query, idx) {
 }
 
 function buildSnippet(text, query) {
-  const normalize = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const normalize = (s) =>
+    s
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
   const nText = normalize(text);
   const nQuery = normalize(query.trim());
   const pos = nText.indexOf(nQuery);
@@ -694,18 +717,25 @@ function buildSnippet(text, query) {
   // Show ±60 chars around the match
   const start = Math.max(0, pos - 60);
   const end = Math.min(text.length, pos + query.length + 60);
-  let snippet = (start > 0 ? "…" : "") + text.slice(start, end) + (end < text.length ? "…" : "");
+  let snippet =
+    (start > 0 ? "…" : "") +
+    text.slice(start, end) +
+    (end < text.length ? "…" : "");
 
   // Highlight the match (case-insensitive, preserving original case)
   const regex = new RegExp(escapeRegex(query.trim()), "gi");
   return escapeHtml(snippet).replace(
     new RegExp(escapeRegex(escapeHtml(query.trim())), "gi"),
-    (m) => `<mark>${m}</mark>`
+    (m) => `<mark>${m}</mark>`,
   );
 }
 
 function escapeHtml(str) {
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -738,18 +768,22 @@ function navigateToResult(item) {
 /* ─── Keyboard navigation ───────────────────────────── */
 function handleSearchKey(e) {
   const resultsEl = document.getElementById("search-results");
-  const items = resultsEl ? Array.from(resultsEl.querySelectorAll(".search-result-item")) : [];
+  const items = resultsEl
+    ? Array.from(resultsEl.querySelectorAll(".search-result-item"))
+    : [];
 
   if (e.key === "ArrowDown") {
     e.preventDefault();
     _searchFocusedIdx = Math.min(_searchFocusedIdx + 1, items.length - 1);
     updateFocusedResult();
-    if (items[_searchFocusedIdx]) items[_searchFocusedIdx].scrollIntoView({ block: "nearest" });
+    if (items[_searchFocusedIdx])
+      items[_searchFocusedIdx].scrollIntoView({ block: "nearest" });
   } else if (e.key === "ArrowUp") {
     e.preventDefault();
     _searchFocusedIdx = Math.max(_searchFocusedIdx - 1, 0);
     updateFocusedResult();
-    if (items[_searchFocusedIdx]) items[_searchFocusedIdx].scrollIntoView({ block: "nearest" });
+    if (items[_searchFocusedIdx])
+      items[_searchFocusedIdx].scrollIntoView({ block: "nearest" });
   } else if (e.key === "Enter") {
     e.preventDefault();
     if (_searchFocusedIdx >= 0 && items[_searchFocusedIdx]) {

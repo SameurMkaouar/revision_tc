@@ -1300,7 +1300,9 @@ hr {
   font-size: 13px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 }
 .sidebar-search-btn:hover {
   border-color: var(--accent);
@@ -1573,8 +1575,12 @@ body.sidebar-collapsed .sidebar-search-btn svg {
 
 /* Highlight flash on navigated element */
 @keyframes search-flash {
-  0%   { background: rgba(82, 156, 202, 0.3); }
-  100% { background: transparent; }
+  0% {
+    background: rgba(82, 156, 202, 0.3);
+  }
+  100% {
+    background: transparent;
+  }
 }
 .search-highlight-flash {
   animation: search-flash 1.6s ease-out forwards;

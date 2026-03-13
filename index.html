@@ -60,8 +60,8 @@
           aria-label="Rechercher dans le cours"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="8"/>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
         </button>
         <button
@@ -249,10 +249,15 @@
 
       <!-- Desktop sidebar search button -->
       <div class="sidebar-search-wrap">
-        <button class="sidebar-search-btn" onclick="openSearch()" title="Rechercher (Ctrl+K)" aria-label="Rechercher dans le cours">
+        <button
+          class="sidebar-search-btn"
+          onclick="openSearch()"
+          title="Rechercher (Ctrl+K)"
+          aria-label="Rechercher dans le cours"
+        >
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="8"/>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
           <span class="sidebar-search-label">Rechercher…</span>
           <kbd class="sidebar-search-kbd">Ctrl+K</kbd>
@@ -2768,12 +2773,19 @@ networks:
     </main>
 
     <!-- ============ SEARCH MODAL ============ -->
-    <div id="search-overlay" class="search-overlay" role="dialog" aria-modal="true" aria-label="Recherche" onclick="handleSearchOverlayClick(event)">
+    <div
+      id="search-overlay"
+      class="search-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Recherche"
+      onclick="handleSearchOverlayClick(event)"
+    >
       <div class="search-modal">
         <div class="search-input-wrap">
           <svg class="search-modal-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="8"/>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
           <input
             type="search"
@@ -2787,11 +2799,25 @@ networks:
             oninput="performSearch(this.value)"
             onkeydown="handleSearchKey(event)"
           />
-          <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" aria-label="Effacer" style="display:none">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <button
+            class="search-clear-btn"
+            id="search-clear-btn"
+            onclick="clearSearch()"
+            aria-label="Effacer"
+            style="display: none"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
           </button>
         </div>
-        <div id="search-results" class="search-results" role="listbox" aria-label="Résultats de recherche"></div>
+        <div
+          id="search-results"
+          class="search-results"
+          role="listbox"
+          aria-label="Résultats de recherche"
+        ></div>
         <div class="search-footer">
           <span><kbd>↑</kbd><kbd>↓</kbd> naviguer</span>
           <span><kbd>↵</kbd> ouvrir</span>
