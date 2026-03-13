@@ -1285,7 +1285,9 @@ hr {
    SEARCH — sidebar desktop button
 ═══════════════════════════════════════════════════════ */
 .sidebar-search-wrap {
-  padding: 8px 8px 0;
+  padding: 8px 8px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--border);
 }
 .sidebar-search-btn {
   display: flex;
@@ -1336,7 +1338,8 @@ hr {
 
 /* Collapsed sidebar: icon-only search button */
 body.sidebar-collapsed .sidebar-search-wrap {
-  padding: 8px 6px 0;
+  padding: 8px 6px;
+  margin-bottom: 6px;
 }
 body.sidebar-collapsed .sidebar-search-btn {
   width: 62px;

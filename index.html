@@ -137,6 +137,23 @@
         <h2>Techniques de Conteneurisation</h2>
       </div>
       <nav>
+        <!-- Desktop sidebar search button -->
+        <div class="sidebar-search-wrap">
+          <button
+            class="sidebar-search-btn"
+            onclick="openSearch()"
+            title="Rechercher (Ctrl+K)"
+            aria-label="Rechercher dans le cours"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <span class="sidebar-search-label">Rechercher…</span>
+            <kbd class="sidebar-search-kbd">Ctrl+K</kbd>
+          </button>
+        </div>
+
         <button
           class="nav-item active"
           data-page="home"
@@ -246,23 +263,6 @@
           <span class="nav-item-label">Examens & Corrections</span>
         </button>
       </nav>
-
-      <!-- Desktop sidebar search button -->
-      <div class="sidebar-search-wrap">
-        <button
-          class="sidebar-search-btn"
-          onclick="openSearch()"
-          title="Rechercher (Ctrl+K)"
-          aria-label="Rechercher dans le cours"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <span class="sidebar-search-label">Rechercher…</span>
-          <kbd class="sidebar-search-kbd">Ctrl+K</kbd>
-        </button>
-      </div>
     </aside>
 
     <!-- ============ MAIN CONTENT ============ -->
